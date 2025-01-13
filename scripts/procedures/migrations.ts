@@ -16,9 +16,9 @@ export const migration: T.ExpectedExports.migration =
             return config;
           },
           false,
-          { version: "0.2.2", type: "down" }
+          { version: "0.2.1", type: "down" }
         ),
       },
     },
-    "0.2.1"
+    "0.2.2"
   );
