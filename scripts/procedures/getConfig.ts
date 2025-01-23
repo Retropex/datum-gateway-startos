@@ -335,12 +335,21 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       //   default: false,
       //   nullable: true,
       // },
-      pooled_mining_only: {
-        type: "boolean",
-        name: "Pooled Mining Only",
-        description: "If the DATUM pool server becomes unavailable, terminate miner connections (otherwise, 100% of any blocks you find pay mining.pool_address) (boolean, default: true)",
-        default: true,
-        nullable: true,
+      reward_sharing: {
+        type: "enum",
+        values: [
+          "require",
+          "prefer",
+          "never",
+        ],
+        name: "Collaborative reward sharing (pooled mining)",
+        description: "You can share rewards and share in others' rewards - or only get rewarded when you find a block yourself.",
+        "value-names": {
+          require: "require (pooled mining only)",
+          prefer: "prefer (failover to non-pooled)",
+          never: "never (non-pooled only)",
+        },
+        default: "require",
       },
     },
   },

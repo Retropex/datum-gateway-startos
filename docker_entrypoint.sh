@@ -11,7 +11,23 @@ else
     echo "blocknotify is set to: $blocknotify"
 fi
 
-yq eval -o=json /root/start9/config.yaml > /root/data/datum_gateway_config.json
+filter='.'
+case $(yq eval .datum.reward_sharing /root/start9/config.yaml) in
+require)
+    filter="${filter}"'|.datum.pooled_mining_only=true'
+    ;;
+prefer)
+    filter="${filter}"'|.datum.pooled_mining_only=false'
+    ;;
+never)
+    filter="${filter}"'|.datum.pooled_mining_only=false'
+    filter="${filter}"'|.datum.pool_host=""'
+    ;;
+esac
+yq eval -o=json \
+ "${filter}" \
+ /root/start9/config.yaml \
+ > /root/data/datum_gateway_config.json
 printf "\n\n [i] Starting Datum Gateway ...\n\n"
 
 exec datum_gateway -c /root/data/datum_gateway_config.json
