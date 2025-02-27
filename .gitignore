@@ -1,4 +1,7 @@
+*.s9pk
+startos/*.js
+node_modules/
 .DS_Store
-datum.s9pk
-docker-images/
-scripts/embassy.js
+.vscode/
+docker-images
+javascript
