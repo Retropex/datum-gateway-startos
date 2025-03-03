@@ -52,7 +52,7 @@ Clone the project locally.
 
 ```
 git clone https://github.com/ocean-xyz/datum-gateway-startos
-cd datum-wrapper
+cd datum-gateway-startos
 ```
 
 ## Building
@@ -80,7 +80,7 @@ make arm
 ```
 start-cli auth login
 # Enter your Start9 server master password
-start-cli --host https://adjective-noun.local package install robosats.s9pk
+start-cli --host https://adjective-noun.local package install datum.s9pk
 ```
 
 ### UI
