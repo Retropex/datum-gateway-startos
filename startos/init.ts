@@ -4,21 +4,10 @@ import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
-import { getSecretPhrase } from './utils'
-import { yamlFile } from './file-models/config.yml'
+import { yamlFile } from './file-models/config.json'
 
 // **** Install ****
-const install = sdk.setupInstall(async ({ effects }) => {
-  const name = 'World'
-
-  await yamlFile.write({ name })
-
-  await sdk.store.setOwn(
-    effects,
-    sdk.StorePath.secretPhrase,
-    getSecretPhrase(name),
-  )
-})
+const install = sdk.setupInstall(async ({ effects }) => {})
 
 // **** Uninstall ****
 const uninstall = sdk.setupUninstall(async ({ effects }) => {})
