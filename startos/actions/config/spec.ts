@@ -10,7 +10,7 @@ export const inputSpecSpec = InputSpec.of({
     InputSpec.of({
       rpcurl: Value.text({
         name: 'RPC URL',
-        default: 'http://bitcoind.embassy:8332',
+        default: 'http://bitcoind.startos:8332',
         required: true,
         description:
           'RPC URL for communication with local bitcoind. (GBT Template Source)',

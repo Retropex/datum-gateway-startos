@@ -2,6 +2,9 @@ export const uiPort = 7152
 export const stratumPort = 23334
 export const configJsonDefaults = {
   bitcoind: {
+    rpcurl: 'http://bitcoind.startos:8332',
+    rpcuser: '',
+    rpcpassword: '',
     work_update_seconds: 40,
     notify_fallback: true,
   },
@@ -27,20 +30,21 @@ export const configJsonDefaults = {
     save_submitblocks_dir: '',
   },
   api: {
-    listen_port: 0,
-    extra_block_submissions: {
-      urls: [],
-    },
-    logger: {
-      log_to_console: true,
-      log_to_stderr: false,
-      log_file: "",
-      log_to_file: false,
-      log_rotate_daily: true,
-      log_calling_function: true,
-      log_level_console: 2,
-      log_level_file: 1,
-    },
+    listen_port: 0, // 0 = disabled
+    modify_conf: false,
+  },
+  extra_block_submissions: {
+    urls: [], // include auth info eg. http://user:pass@IP
+  },
+  logger: {
+    log_to_console: true,
+    log_to_stderr: false,
+    log_file: '',
+    log_to_file: false,
+    log_rotate_daily: true,
+    log_calling_function: true,
+    log_level_console: 2, // 0=All, 1=Debug, 2=Info, 3=Warn, 4=Error, 5=Fatal
+    log_level_file: 1, // 0=All, 1=Debug, 2=Info, 3=Warn, 4=Error, 5=Fatal
   },
   datum: {
     pool_host: 'datum-beta1.mine.ocean.xyz', // set to "" to disable pooled mining
