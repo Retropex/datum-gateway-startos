@@ -34,15 +34,5 @@ WORKDIR /root
 COPY --from=build /parent_dir/datum_gateway/datum_gateway /usr/local/bin/datum_gateway
 
 RUN chmod +x /usr/local/bin/datum_gateway
-ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
-ADD ./check-stratum.sh /usr/local/bin/check-stratum.sh
-RUN chmod a+x /usr/local/bin/check-stratum.sh
-ADD ./check-bitcoin.sh /usr/local/bin/check-bitcoin.sh
-RUN chmod a+x /usr/local/bin/check-bitcoin.sh
-ADD ./check-dashboard.sh /usr/local/bin/check-dashboard.sh
-RUN chmod a+x /usr/local/bin/check-dashboard.sh
-ADD ./check-blocknotify.sh /usr/local/bin/check-blocknotify.sh
-RUN chmod a+x /usr/local/bin/check-blocknotify.sh
 
 WORKDIR /root
