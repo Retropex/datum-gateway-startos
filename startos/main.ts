@@ -9,18 +9,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     id: 'stratum-interface',
     name: 'Stratum Interface',
     fn: () =>
-      sdk.healthCheck.checkWebUrl(
-        effects,
-        'http://datum.startos:23335',
-        {
-          timeout: 1000,
-          successMessage: `Stratum server is available. Ensure you're forwarding with simpleproxy and then connect your miner(s).`,
-          errorMessage: `Stratum server is unavailable`,
-        },
-      ),
+      sdk.healthCheck.checkWebUrl(effects, 'http://datum.startos:23335', {
+        timeout: 1000,
+        successMessage: `Stratum server is available. Ensure you're forwarding with simpleproxy and then connect your miner(s).`,
+        errorMessage: `Stratum server is unavailable`,
+      }),
   })
 
-  const healthReceipts: T.HealthReceipt[] = [stratumHealthCheck]
+  const healthReceipts: T.HealthCheck[] = [stratumHealthCheck]
 
   return sdk.Daemons.of(effects, started, healthReceipts).addDaemon('primary', {
     subcontainer: { imageId: 'main' },

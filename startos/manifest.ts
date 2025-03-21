@@ -13,7 +13,6 @@ export const manifest = setupManifest({
     short: 'Make block templates and issue work to your miners',
     long: 'Datum Gateway allows miners to use their Bitcoin node to generate their own templates and issue work to their miners while still sharing rewards on a pool or solo mining..',
   },
-  assets: [],
   volumes: ['main'],
   images: {
     main: {

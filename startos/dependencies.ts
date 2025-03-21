@@ -3,7 +3,7 @@ import { sdk } from './sdk'
 export const setDependencies = sdk.setupDependencies(async ({ effects }) => ({
   bitcoind: {
     kind: 'running',
-    versionRange: '>=28.0.0:1-knots',
+    versionRange: '=#knots28.1.0:3',
     healthChecks: ['primary'],
   },
 }))
