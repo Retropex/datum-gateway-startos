@@ -11,25 +11,32 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     fn: () =>
       sdk.healthCheck.checkWebUrl(effects, 'http://datum.startos:23335', {
         timeout: 1000,
-        successMessage: `Stratum server is available. Ensure you're forwarding with simpleproxy and then connect your miner(s).`,
+        successMessage: `Stratum server is available`,
         errorMessage: `Stratum server is unavailable`,
       }),
   })
 
-  const healthReceipts: T.HealthCheck[] = [stratumHealthCheck]
+  const additionalChecks: T.HealthCheck[] = [stratumHealthCheck]
 
-  return sdk.Daemons.of(effects, started, healthReceipts).addDaemon('primary', {
-    subcontainer: { imageId: 'main' },
-    command: ['datum_gateway', '-c', '/media/startos/volumes/main/config.json'],
-    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
-    ready: {
-      display: 'Web Interface',
-      fn: () =>
-        sdk.healthCheck.checkPortListening(effects, uiPort, {
-          successMessage: 'The Datum Gateway dashboard is ready',
-          errorMessage: 'The Datum Gateway dashboard is not ready',
-        }),
+  return sdk.Daemons.of(effects, started, additionalChecks).addDaemon(
+    'primary',
+    {
+      subcontainer: { imageId: 'main' },
+      command: [
+        'datum_gateway',
+        '-c',
+        '/media/startos/volumes/main/config.json',
+      ],
+      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+      ready: {
+        display: 'Web Interface',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, uiPort, {
+            successMessage: 'The Datum Gateway dashboard is ready',
+            errorMessage: 'The Datum Gateway dashboard is not ready',
+          }),
+      },
+      requires: [],
     },
-    requires: [],
-  })
+  )
 })

@@ -1,6 +1,12 @@
 export const uiPort = 7152
 export const stratumPort = 23334
-export const configJsonDefaults = {
+
+export const randomPassword = {
+  charset: 'a-z,A-Z,1-9,!,@,$,%,&,*',
+  len: 22,
+}
+
+export const configDefaults = {
   bitcoind: {
     rpcurl: 'http://bitcoind.startos:8332',
     rpcuser: '',
@@ -24,6 +30,7 @@ export const configJsonDefaults = {
     idle_timeout_max_last_work: 0,
   },
   mining: {
+    pool_address: '',
     coinbase_tag_primary: 'DATUM Gateway',
     coinbase_tag_secondary: 'DATUM User',
     coinbase_unique_id: 4242,
@@ -31,6 +38,7 @@ export const configJsonDefaults = {
   },
   api: {
     listen_port: 0, // 0 = disabled
+    admin_password: '',
     modify_conf: false,
   },
   extra_block_submissions: {
