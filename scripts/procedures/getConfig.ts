@@ -222,8 +222,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       },
       admin_password: {
         type: "string",
-        name: "API password",
-        description: "API password for actions/changes",
+        name: "Admin Password",
+        description: "Admin password for actions/changes",
         default: "",
         nullable: true,
       },
