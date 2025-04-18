@@ -69,6 +69,7 @@ health-checks:
     mounts: {}
     io-format: json
     inject: true
+config:
   get:
     type: script
   set:
