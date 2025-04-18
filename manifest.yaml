@@ -1,9 +1,9 @@
 # Example written in yaml (toml and json are also acceptable)
 
 # The package identifier used by the OS. This must be unique amongst all other known packages
-id: datum
+id: datumtwo
  # A human readable service title
-title: "Datum Gateway"
+title: "Datum Gateway (second instance)"
 # Service version - accepts up to four digits, where the last confirms to revisions necessary for StartOS - see documentation: https://github.com/Start9Labs/emver-rs. This value will change with each release of the service. 
 version: 0.3.1
 # Release notes for the update - can be a string, paragraph or URL
@@ -95,11 +95,11 @@ interfaces:
     description: Dashboard for Datum-gateway
     tor-config:
       port-mapping:
-        80: "7152"
+        80: "17152"
     lan-config:
       443:
         ssl: true
-        internal: 7152
+        internal: 17152
     ui: true
     protocols:
       - tcp
@@ -108,9 +108,9 @@ interfaces:
     name: Mining Interface
     description: Point your ASICs here!
     lan-config:
-      23335:
+      33335:
         ssl: false
-        internal: 23335
+        internal: 33335
     ui: false
     protocols:
       - tcp

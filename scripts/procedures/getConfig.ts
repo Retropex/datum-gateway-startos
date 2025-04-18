@@ -70,7 +70,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
         nullable: true,
         range: "[0,65535]",
         integral: false,
-        default: 23335,
+        default: 33335,
       },
       max_clients_per_thread: {
         type: "number",
@@ -218,7 +218,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
         nullable: false,
         range: "[0,65535]",
         integral: true,
-        default: 7152,
+        default: 17152,
       },
       admin_password: {
         type: "string",
