@@ -7,7 +7,7 @@ if [ "$blocknotify" = "null" ] || [ -z "$blocknotify" ]; then
     exit 1
 fi
 
-if [ "$blocknotify" != "curl -s -m5 http://datum.embassy:7152/NOTIFY" ]; then
+if [ "$blocknotify" != "curl -s -m5 http://datum.embassy:17152/NOTIFY" ]; then
     echo "Error: The blocknotify field is not set correctly. Please delete it and auto-configure Knots from Datum Gateway then restart Datum Gateway." >&2
     exit 1
 fi

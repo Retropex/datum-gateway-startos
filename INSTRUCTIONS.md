@@ -1,6 +1,8 @@
 
 # Welcome to Datum-Gateway!
 
+Note: This package is for people who already have a DATUM instance!
+
 Quick-start guide for those already mining on OCEAN:
 
 1. Bitcoin Knots is required. This can be found in the Start9 Community Marketplace.
@@ -9,7 +11,7 @@ Quick-start guide for those already mining on OCEAN:
 
 3. Put a valid Bitcoin address into Datum-Gateway's config and start the service.
 
-4. Point your miners to the IP and PORT of your Start9 Server and Datum-Gateway service respectively. *(Something like 192.168.x.y replacing x and y as necessary for the Start9 Server IP. 23334 is the default port for Datum-Gateway.)*
+4. Point your miners to the IP and PORT of your Start9 Server and Datum-Gateway service respectively. *(Something like 192.168.x.y replacing x and y as necessary for the Start9 Server IP. 33334 is the default port for Datum-Gateway.)*
 
 See below for more comprehensive instructions.
 
@@ -45,11 +47,11 @@ If you chose to write only worker names in your miners and omit Bitcoin address(
 
 # Setting Up Your Miners
 
-Point your miners to the IP address of your Start9 Server followed by the port of the Datum-Gateway service. This is 23334 by default so in your miner UI under **"Stratum URL"/"Host"/"Pool"/similar** you will enter something like this:
+Point your miners to the IP address of your Start9 Server followed by the port of the Datum-Gateway service. This is 33334 by default so in your miner UI under **"Stratum URL"/"Host"/"Pool"/similar** you will enter something like this:
 
-`stratum+tcp://192.168.x.y:23334` 
+`stratum+tcp://192.168.x.y:33334` 
 or 
-`stratum+tcp://10.0.0.x:23334` replacing x/y as appropriate.
+`stratum+tcp://10.0.0.x:33334` replacing x/y as appropriate.
 
 Under **"Username"/"Worker"** enter a Bitcoin address. This is where your OCEAN rewards will go. You can append this with unique worker information if desired.
 
@@ -107,7 +109,7 @@ Copy and paste the following lines of code one by one:
 
 Now copy and paste the following chunk of code in one command:
 
-echo -e '[Unit]\nDescription=Simpleproxy Datum Forward\nWants=podman.service\nAfter=podman.service\n\n[Service]\nType=simple\nRestart=always\nRestartSec=3\nExecStartPre=/bin/bash -c "/bin/systemctl set-environment IP=$(ip route | grep default | awk '\''{print $9}'\'')"\nExecStart=/usr/bin/simpleproxy -L ${IP}:23334 -R datum.embassy:23335\n\n[Install]\nWantedBy=multi-user.target' > /lib/systemd/system/simpleproxy.datum.service
+echo -e '[Unit]\nDescription=Simpleproxy Datum Forward\nWants=podman.service\nAfter=podman.service\n\n[Service]\nType=simple\nRestart=always\nRestartSec=3\nExecStartPre=/bin/bash -c "/bin/systemctl set-environment IP=$(ip route | grep default | awk '\''{print $9}'\'')"\nExecStart=/usr/bin/simpleproxy -L ${IP}:33334 -R datum.embassy:33335\n\n[Install]\nWantedBy=multi-user.target' > /lib/systemd/system/simpleproxy.datum.service
 
 Next, copy and paste the following:
 
