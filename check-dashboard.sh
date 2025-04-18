@@ -4,7 +4,7 @@ read DURATION
 if [ "$DURATION" -le 1000 ]; then
     exit 60
 else
-    if curl -sS http://datum.embassy:17152 >/dev/null; then
+    if curl -sS http://datumtwo.embassy:17152 >/dev/null; then
         exit 0
     else
         echo "The dashboard is not ready" >&2
