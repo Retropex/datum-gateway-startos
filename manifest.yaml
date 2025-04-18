@@ -69,18 +69,6 @@ health-checks:
     mounts: {}
     io-format: json
     inject: true
-  blocknotify:
-    name: Bitcoind Blocknotify Setting
-    success-message: Blocknotify set correctly.
-    type: docker
-    image: main
-    system: false
-    entrypoint: check-blocknotify.sh
-    args: []
-    mounts: {}
-    io-format: json
-    inject: true
-config:
   get:
     type: script
   set:
