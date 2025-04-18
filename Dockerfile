@@ -42,7 +42,5 @@ ADD ./check-bitcoin.sh /usr/local/bin/check-bitcoin.sh
 RUN chmod a+x /usr/local/bin/check-bitcoin.sh
 ADD ./check-dashboard.sh /usr/local/bin/check-dashboard.sh
 RUN chmod a+x /usr/local/bin/check-dashboard.sh
-ADD ./check-blocknotify.sh /usr/local/bin/check-blocknotify.sh
-RUN chmod a+x /usr/local/bin/check-blocknotify.sh
 
 WORKDIR /root
