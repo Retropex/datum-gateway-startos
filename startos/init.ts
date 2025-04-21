@@ -1,13 +1,16 @@
 import { sdk } from './sdk'
-import { exposedStore } from './store'
+import { exposedStore, initStore } from './store'
 import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
 import { resetPassword } from './actions/resetPassword'
 
-// **** Install ****
-const install = sdk.setupInstall(async ({ effects }) => {
+// **** Pre Install ****
+const preInstall = sdk.setupPreInstall(async ({ effects }) => {})
+
+// **** Post Install ****
+const postInstall = sdk.setupPostInstall(async ({ effects }) => {
   await sdk.action.requestOwn(effects, resetPassword, 'critical')
 })
 
@@ -19,10 +22,12 @@ const uninstall = sdk.setupUninstall(async ({ effects }) => {})
  */
 export const { packageInit, packageUninit, containerInit } = sdk.setupInit(
   versions,
-  install,
+  preInstall,
+  postInstall,
   uninstall,
   setInterfaces,
   setDependencies,
   actions,
+  initStore,
   exposedStore,
 )

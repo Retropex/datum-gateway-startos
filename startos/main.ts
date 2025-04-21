@@ -21,13 +21,17 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   return sdk.Daemons.of(effects, started, additionalChecks).addDaemon(
     'primary',
     {
-      subcontainer: { imageId: 'main' },
+      subcontainer: await sdk.SubContainer.of(
+        effects,
+        { imageId: 'datum' },
+        sdk.Mounts.of().addVolume('main', null, '/data', false),
+        'datum-sub',
+      ),
       command: [
         'datum_gateway',
         '-c',
         '/media/startos/volumes/main/config.json',
       ],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
         display: 'Web Interface',
         fn: () =>

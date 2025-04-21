@@ -15,7 +15,7 @@ export const manifest = setupManifest({
   },
   volumes: ['main'],
   images: {
-    main: {
+    datum: {
       source: {
         dockerBuild: {
           dockerfile: 'Dockerfile',
