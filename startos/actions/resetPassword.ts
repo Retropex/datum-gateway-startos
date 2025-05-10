@@ -9,7 +9,10 @@ export const resetPassword = sdk.Action.withoutInput(
 
   // metadata
   async ({ effects }) => {
-    const hasPass = !!(await configJson.read.const(effects))?.api.admin_password
+    const hasPass = !!(await configJson
+      .read((c) => c.api.admin_password)
+      .const(effects))
+
     const desc = 'your admin password'
 
     return {
