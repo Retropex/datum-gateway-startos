@@ -6,7 +6,7 @@ export const v_0_2_2_2 = VersionInfo.of({
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
-      await rm('/data/start9', { recursive: true })
+      await rm('/data/start9', { recursive: true }).catch(console.error)
     },
     down: IMPOSSIBLE,
   },
