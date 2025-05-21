@@ -16,7 +16,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const uiReceipt = await uiMultiOrigin.export([ui])
 
@@ -35,7 +35,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const stratumReceipt = await stratumMultiOrigin.export([stratum])
 
