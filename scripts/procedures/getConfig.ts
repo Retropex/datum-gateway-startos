@@ -287,7 +287,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       pool_host: {
         type: "string",
         name: "Pool Host",
-        description: "Remote DATUM server host/ip to use for decentralized pooled mining (string, default: datum.mine.ocean.xyz)",
+        description: "Remote DATUM server host/ip to use for decentralized pooled mining (string, default: datum-beta1.mine.ocean.xyz)",
         default: "datum-beta1.mine.ocean.xyz",
         nullable: true,
       },
