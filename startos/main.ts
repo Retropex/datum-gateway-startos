@@ -32,11 +32,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         }),
         'datum-sub',
       ),
-      command: [
-        'datum_gateway',
-        '-c',
-        '/media/startos/volumes/main/config.json',
-      ],
+      exec: {
+        command: [
+          'datum_gateway',
+          '-c',
+          '/media/startos/volumes/main/config.json',
+        ],
+      },
       ready: {
         display: 'Web Interface',
         fn: () =>
