@@ -25,20 +25,26 @@ never)
     ;;
 esac
 
-yq eval -o=json "
-${filter}
+expr_file=$(mktemp)
+
+cat > "$expr_file" <<EOF
+{
+${filter} |
+.stratum
 | .username_modifiers = (
     .username_modifiers
-    | map({
-        key: .name,
-        value: (
-          .addresses 
-          | map({ (.address): (.split | tonumber) }) 
-          | add
-        )
-    }) | from_entries
+    | map(
+        {
+          "key": .name,
+          "value": (.addresses | map({(.address): (.split | tonumber)}) | .[] as $o ireduce ({}; . + $o))
+        }
+    ) | from_entries
 )
-" /root/start9/config.yaml > /root/data/datum_gateway_config.json
+}
+EOF
+
+yq eval -o=json -f "$expr_file" /root/start9/config.yaml > /root/data/datum_gateway_config.json
+rm "$expr_file"
 printf "\n\n [i] Starting Datum Gateway ...\n\n"
 
 exec datum_gateway -c /root/data/datum_gateway_config.json
