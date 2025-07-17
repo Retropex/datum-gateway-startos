@@ -25,10 +25,9 @@ never)
     ;;
 esac
 
-yq eval -o=json \
- "${filter}" \
- '{
-  username_modifiers: (
+yq eval -o=json "
+${filter}
+| .username_modifiers = (
     .username_modifiers
     | map({
         key: .name,
@@ -37,12 +36,9 @@ yq eval -o=json \
           | map({ (.address): (.split | tonumber) }) 
           | add
         )
-      }) 
-    | from_entries
-  )
-}' \
- /root/start9/config.yaml \
- > /root/data/datum_gateway_config.json
+    }) | from_entries
+)
+" /root/start9/config.yaml > /root/data/datum_gateway_config.json
 printf "\n\n [i] Starting Datum Gateway ...\n\n"
 
 exec datum_gateway -c /root/data/datum_gateway_config.json
