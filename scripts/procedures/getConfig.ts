@@ -158,6 +158,63 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       //   default: true,
       //   nullable: false,
       // },
+      "username_modifiers": {
+        type: "object",
+        name: "Username_modifiers",
+        description: "RPC settings for bitcoind",
+        spec: {
+          modif1: {
+            type: "object",
+            name: "Modifier 1",
+            description: "Modifier number 1",
+            spec: {
+              bc1qp37zuf9nfc6298y7fvkqvs5tgkxp7w8mx7v7j4: {
+                type: "number",
+                name: "address value",
+                description: "value of the modifier for this address",
+                nullable: true,
+                integral: false,
+                range: "[0,1]",
+                default: 0.9,
+              },
+              bc1qfrw8sn2usp7hu6yxw66mjpfpehd8hk8r9pz4tl: {
+                type: "number",
+                name: "address value",
+                description: "value of the modifier for this address",
+                nullable: true,
+                integral: false,
+                range: "[0,1]",
+                default: 0.1,
+              },
+            },
+          },
+          modif2: {
+            type: "object",
+            name: "Modifier 2",
+            description: "Modifier number 2",
+            spec: {
+              bc1qthxnjh2e5jsjhs428zyagm4uecwy9tujl4mp7y: {
+                type: "number",
+                name: "address value",
+                description: "value of the modifier for this address",
+                nullable: true,
+                integral: false,
+                range: "[0,1]",
+                default: 0.9,
+              },
+              bc1qfmqfn3df8ld7pmc5u8eydah9tkv6w42vamd56v: {
+                type: "number",
+                name: "address value",
+                description: "value of the modifier for this address",
+                nullable: true,
+                integral: false,
+                range: "[0,1]",
+                default: 0.1,
+              },
+            },
+          },
+        },
+      },
     },
   },
   "mining": {
