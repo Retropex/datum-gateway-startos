@@ -24,8 +24,23 @@ never)
     filter="${filter}"'|.datum.pool_host=""'
     ;;
 esac
+
 yq eval -o=json \
  "${filter}" \
+ '{
+  username_modifiers: (
+    .username_modifiers
+    | map({
+        key: .name,
+        value: (
+          .addresses 
+          | map({ (.address): (.split | tonumber) }) 
+          | add
+        )
+      }) 
+    | from_entries
+  )
+}' \
  /root/start9/config.yaml \
  > /root/data/datum_gateway_config.json
 printf "\n\n [i] Starting Datum Gateway ...\n\n"
