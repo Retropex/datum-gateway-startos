@@ -1,9 +1,10 @@
 // // To utilize the default config system built, this file is required. It defines the *structure* of the configuration file. These structured options display as changeable UI elements within the "Config" section of the service details page in the StartOS UI.
 
+import { string } from "https://deno.land/x/ts_matches@v5.2.0/mod.ts";
 import { compat, types as T } from "../deps.ts";
 
 export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
-  "bitcoind": {
+  bitcoind: {
     type: "object",
     name: "Bitcoin RPC settings",
     description: "RPC settings for bitcoind",
@@ -31,7 +32,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       rpcurl: {
         type: "string",
         name: "RPC URL",
-        description: "RPC URL for communication with local bitcoind. (GBT Template Source)",
+        description:
+          "RPC URL for communication with local bitcoind. (GBT Template Source)",
         nullable: false,
         default: "http://bitcoind.embassy:8332",
       },
@@ -48,7 +50,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       blocknotify: {
         type: "pointer",
         name: "Block Notify",
-        description: "Does Bitcoind have blocknotify? This should say curl -s -m5 http://datum.embassy:7152/NOTIFY",
+        description:
+          "Does Bitcoind have blocknotify? This should say curl -s -m5 http://datum.embassy:7152/NOTIFY",
         subtype: "package",
         "package-id": "bitcoind",
         target: "config",
@@ -58,7 +61,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       //notify_fallback?
     },
   },
-  "stratum": {
+  stratum: {
     type: "object",
     name: "Stratum Server Settings",
     description: "Configure the Datum gateway's stratum server.",
@@ -93,7 +96,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       max_clients: {
         type: "number",
         name: "Max Clients",
-        description: "Maximum total Stratum clients before rejecting connections (integer, default: 2048)",
+        description:
+          "Maximum total Stratum clients before rejecting connections (integer, default: 2048)",
         nullable: true,
         range: "[0,*)",
         integral: true,
@@ -111,7 +115,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       vardiff_target_shares_min: {
         type: "number",
         name: "Target Shares per Minute",
-        description: "Adjust work difficulty to target this many shares per minute (integer, default: 8)",
+        description:
+          "Adjust work difficulty to target this many shares per minute (integer, default: 8)",
         nullable: true,
         range: "[0,*)",
         integral: true,
@@ -120,7 +125,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       vardiff_quickdiff_count: {
         type: "number",
         name: "Difficulty Update Speed",
-        description: "How many shares before considering a quick diff update (integer, default: 8)",
+        description:
+          "How many shares before considering a quick diff update (integer, default: 8)",
         nullable: true,
         range: "[0,*)",
         integral: true,
@@ -129,7 +135,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       vardiff_quickdiff_delta: {
         type: "number",
         name: "Difficulty Delta",
-        description: "How many times faster than our target does the miner have to be before we enforce a quick diff bump (integer, default: 8)",
+        description:
+          "How many times faster than our target does the miner have to be before we enforce a quick diff bump (integer, default: 8)",
         nullable: true,
         range: "[0,*)",
         integral: true,
@@ -138,7 +145,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       share_stale_seconds: {
         type: "number",
         name: "Seconds Until Shares Considered Stale",
-        description: "How many seconds after a job is generated before a share submission is considered stale? (integer, default: 120)",
+        description:
+          "How many seconds after a job is generated before a share submission is considered stale? (integer, default: 120)",
         nullable: true,
         range: "[0,*)",
         integral: true,
@@ -147,7 +155,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       fingerprint_miners: {
         type: "boolean",
         name: "Fingerprint Miners",
-        description: "Attempt to fingerprint miners for better use of coinbase space (boolean, default: true)",
+        description:
+          "Attempt to fingerprint miners for better use of coinbase space (boolean, default: true)",
         default: true,
         nullable: false,
       },
@@ -158,9 +167,56 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       //   default: true,
       //   nullable: false,
       // },
+      username_modifiers: {
+        type: "list",
+        subtype: "object",
+        name: "Username_modifiers",
+        description: "RPC settings for bitcoind",
+        default: [],
+        range: "[0,*)",
+        spec: {
+          spec: {
+            name: {
+              type: "string",
+              nullable: false,
+              name: "Modifier name",
+              description: "The name of this modifier",
+            },
+            addresses: {
+              type: "list",
+              subtype: "object",
+              name: "Modifier addresses",
+              description: "Bitcoin addresses and the designated split amount",
+              default: [],
+              range: "[2,*)",
+              spec: {
+                spec: {
+                  address: {
+                    type: "string",
+                    name: "Bitcoin address",
+                    description: "The bitcoin address to send to",
+                    nullable: false,
+                    pattern: "[0-9a-zA-Z]{20,88}",
+                    "pattern-description": "Must be a valid bitcoin address",
+                  },
+                  split: {
+                    type: "number",
+                    name: "Address split",
+                    description: "value of the modifier for this address",
+                    nullable: false,
+                    integral: false,
+                    range: "[0,1]",
+                    default: 0.9,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
-  "mining": {
+  mining: {
     type: "object",
     name: "Mining Settings",
     description: "Mining settings",
@@ -168,23 +224,25 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       pool_address: {
         type: "string",
         name: "Bitcoin Address",
-        description: "Bitcoin address used for mining on DATUM Pool, and for solo mining rewards.",
+        description:
+          "Bitcoin address used for mining on DATUM Pool, and for solo mining rewards.",
         nullable: false,
         pattern: "[0-9a-zA-Z]{20,88}",
-        "pattern-description":
-          "Must be a valid Bitcoin address.",
+        "pattern-description": "Must be a valid Bitcoin address.",
       },
       coinbase_tag_primary: {
         type: "string",
         name: "Primary Coinbase Tag",
-        description: "Text to have in the primary coinbase tag when solo (overridden by DATUM Pool with the pool's name.)",
+        description:
+          "Text to have in the primary coinbase tag when solo (overridden by DATUM Pool with the pool's name.)",
         default: "Datum User",
         nullable: true,
       },
       coinbase_tag_secondary: {
         type: "string",
         name: "Secondary Coinbase Tag",
-        description: "Text to have in the secondary coinbase tag. If you're mining on a pool, this is what you label your blocks with.",
+        description:
+          "Text to have in the secondary coinbase tag. If you're mining on a pool, this is what you label your blocks with.",
         default: "Datum Miner",
         nullable: true,
       },
@@ -198,7 +256,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       coinbase_unique_id: {
         type: "number",
         name: "Coinbase Unique ID",
-        description: "A unique ID between 1 and 65535. This is appended to the coinbase. Make unique per instance of datum with the same coinbase tags.",
+        description:
+          "A unique ID between 1 and 65535. This is appended to the coinbase. Make unique per instance of datum with the same coinbase tags.",
         integral: true,
         range: "[1,65535]",
         default: 120,
@@ -206,7 +265,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       },
     },
   },
-  "api": {
+  api: {
     type: "object",
     name: "API",
     description: "Settings for the Datum Gateway Dashboard",
@@ -240,7 +299,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
   //     nullable: true,
   //   },
   // },
-  "logger": {
+  logger: {
     type: "object",
     name: "Logger",
     description: "Log Settings",
@@ -248,46 +307,49 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       log_level_console: {
         type: "number",
         name: "Log Level Console",
-        description: "Minimum log level for console messages (0=All, 1=Debug, 2=Info, 3=Warn, 4=Error, 5=Fatal) (integer, default: 2)",
+        description:
+          "Minimum log level for console messages (0=All, 1=Debug, 2=Info, 3=Warn, 4=Error, 5=Fatal) (integer, default: 2)",
         integral: true,
         range: "[0,5)",
         default: 2,
         nullable: false,
       },
       log_to_file: {
-	type: "boolean",
-	name: "Log to File",
-	description: "Enable logging of messages to a file",
-	default: false,
-	nullable: true,	
+        type: "boolean",
+        name: "Log to File",
+        description: "Enable logging of messages to a file",
+        default: false,
+        nullable: true,
       },
       log_file: {
-	type: "string",
-	name: "Log File",
-	description: "Path to file to write log messages, when enabled",
-	default: "/root/start9/logs.txt",
-	nullable: true,
+        type: "string",
+        name: "Log File",
+        description: "Path to file to write log messages, when enabled",
+        default: "/root/start9/logs.txt",
+        nullable: true,
       },
       log_level_file: {
-	type: "number",
-	name: "File Log Level",
-	description: "Minimum log level for log file messages",
-	integral: true,
-	range: "[0,5)",
-	default: 1,
-	nullable: true,
+        type: "number",
+        name: "File Log Level",
+        description: "Minimum log level for log file messages",
+        integral: true,
+        range: "[0,5)",
+        default: 1,
+        nullable: true,
       },
     },
   },
-  "datum":{
+  datum: {
     type: "object",
     name: "Datum",
-    description: "Datum-Gateway settings. These are set to mine on OCEAN by default. Modify to switch to another Datum-supporting pool, or to solo mine.",
+    description:
+      "Datum-Gateway settings. These are set to mine on OCEAN by default. Modify to switch to another Datum-supporting pool, or to solo mine.",
     spec: {
       pool_host: {
         type: "string",
         name: "Pool Host",
-        description: "Remote DATUM server host/ip to use for decentralized pooled mining (string, default: datum-beta1.mine.ocean.xyz)",
+        description:
+          "Remote DATUM server host/ip to use for decentralized pooled mining (string, default: datum-beta1.mine.ocean.xyz)",
         default: "datum-beta1.mine.ocean.xyz",
         nullable: true,
       },
@@ -303,28 +365,33 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       pool_pubkey: {
         type: "string",
         name: "Pool Pubkey",
-        description: "Public key of the DATUM server for initiating encrypted connection. Get from secure location, or set to empty to auto-fetch.",
-        default: "f21f2f0ef0aa1970468f22bad9bb7f4535146f8e4a8f646bebc93da3d89b1406f40d032f09a417d94dc068055df654937922d2c89522e3e8f6f0e649de473003",
+        description:
+          "Public key of the DATUM server for initiating encrypted connection. Get from secure location, or set to empty to auto-fetch.",
+        default:
+          "f21f2f0ef0aa1970468f22bad9bb7f4535146f8e4a8f646bebc93da3d89b1406f40d032f09a417d94dc068055df654937922d2c89522e3e8f6f0e649de473003",
         nullable: true,
       },
       pool_pass_workers: {
         type: "boolean",
         name: "Pool Pass Workers",
-        description: "Pass stratum miner usernames as sub-worker names to the pool (boolean, default: true)",
+        description:
+          "Pass stratum miner usernames as sub-worker names to the pool (boolean, default: true)",
         default: true,
         nullable: true,
       },
       pool_pass_full_users: {
         type: "boolean",
         name: "Pool Pass Full Users",
-        description: "Pass stratum miner usernames as raw usernames to the pool (use if putting multiple payout addresses on miners behind this gateway)",
+        description:
+          "Pass stratum miner usernames as raw usernames to the pool (use if putting multiple payout addresses on miners behind this gateway)",
         default: true,
         nullable: true,
       },
       always_pay_self: {
         type: "boolean",
         name: "Always Pay Self",
-        description: "Always include my datum.pool_username payout in my blocks if possible (boolean, default: true)",
+        description:
+          "Always include my datum.pool_username payout in my blocks if possible (boolean, default: true)",
         default: true,
         nullable: true,
       },
@@ -344,13 +411,10 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       // },
       reward_sharing: {
         type: "enum",
-        values: [
-          "require",
-          "prefer",
-          "never",
-        ],
+        values: ["require", "prefer", "never"],
         name: "Collaborative reward sharing (pooled mining)",
-        description: "You can share rewards and share in others' rewards - or only get rewarded when you find a block yourself.",
+        description:
+          "You can share rewards and share in others' rewards - or only get rewarded when you find a block yourself.",
         "value-names": {
           require: "require (pooled mining only)",
           prefer: "prefer (failover to non-pooled)",
