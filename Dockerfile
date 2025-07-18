@@ -18,7 +18,7 @@ RUN cmake . && make
 FROM debian:bookworm-slim AS final
 
 RUN apt update && \
-     apt-get install -y curl netcat-traditional libmicrohttpd12 libjansson4 libsodium23
+     apt-get install -y curl netcat-traditional libmicrohttpd12 libjansson4 libsodium23 jq
 
 ENV yq_sha256_amd64=c0eb42f6fbf928f0413422967983dcdf9806cc4dedc9394edc60c0dfb4a98529
 ENV yq_sha256_arm64=4ab0b301059348d671fc1833e99903c1fecc7ca287ac131f72dca0eb9a6ba87a
