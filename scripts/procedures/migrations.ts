@@ -81,6 +81,23 @@ export const migration: T.ExpectedExports.migration =
           true,
           { version: "0.3.1", type: "down"}
         )
+      },"0.4.0": {
+        up: compat.migrations.updateConfig(
+          (config: any) => {
+            config.stratum.username_modifiers = [];
+            return config;
+          },
+          true,
+          { version: "0.4.0", type: "up"}
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config.stratum.username_modifiers;
+            return config;
+          },
+          true,
+          { version: "0.4.0", type: "down"}
+        )
       }
     },
     "0.4.0"
