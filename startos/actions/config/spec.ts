@@ -49,7 +49,7 @@ export const inputSpecSpec = InputSpec.of({
         name: 'Listen Port',
         description: 'Listening port for Stratum Gateway.',
         warning: null,
-        default: 23335,
+        default: 23334,
         required: false,
         min: 0,
         max: 65535,
