@@ -1,7 +1,7 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
 import { configDefaults } from '../utils'
 
-const { object, string, number, boolean, arrayOf } = matches
+const { object, string, number, boolean, arrayOf, dictionary } = matches
 
 const {
   bitcoind,
@@ -13,7 +13,7 @@ const {
   datum,
 } = configDefaults
 
-const shape = object({
+export const configJsonShape = object({
   bitcoind: object({
     rpcurl: string.onMismatch(bitcoind.rpcurl),
     rpcuser: string.onMismatch(bitcoind.rpcuser),
@@ -41,6 +41,7 @@ const shape = object({
     idle_timeout_max_last_work: number.onMismatch(
       stratum.idle_timeout_max_last_work,
     ),
+    username_modifiers: dictionary([string, dictionary([string, number])]).onMismatch(stratum.username_modifiers)
   }),
   mining: object({
     pool_address: string.onMismatch(mining.pool_address),
@@ -53,9 +54,9 @@ const shape = object({
     admin_password: string.onMismatch(api.admin_password),
     modify_conf: boolean.onMismatch(api.modify_conf),
   }),
-  extra_block_submissions: arrayOf(string).onMismatch(
-    extra_block_submissions.urls,
-  ),
+  // extra_block_submissions: arrayOf(string).onMismatch(
+  //   extra_block_submissions.urls,
+  // ),
   logger: object({
     log_to_stderr: boolean.onMismatch(logger.log_to_stderr),
     log_to_file: boolean.onMismatch(logger.log_to_file),
@@ -82,5 +83,5 @@ export const configJson = FileHelper.json(
     volumeId: 'main',
     subpath: '/config.json',
   },
-  shape,
+  configJsonShape,
 )

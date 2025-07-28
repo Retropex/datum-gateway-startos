@@ -28,6 +28,7 @@ export const configDefaults = {
     idle_timeout_no_subscribe: 15,
     idle_timeout_no_shares: 7200,
     idle_timeout_max_last_work: 0,
+    username_modifiers: {}
   },
   mining: {
     pool_address: '',

@@ -1,7 +1,8 @@
+import { List } from '@start9labs/start-sdk/base/lib/actions/input/builder'
 import { sdk } from '../../sdk'
 const { InputSpec, Value } = sdk
 
-export const inputSpecSpec = InputSpec.of({
+export const inputSpec = InputSpec.of({
   bitcoind: Value.object(
     {
       name: 'Bitcoin RPC settings',
@@ -174,6 +175,54 @@ export const inputSpecSpec = InputSpec.of({
           'Attempt to fingerprint miners for better use of coinbase space (boolean, default: true)',
         warning: null,
       }),
+      username_modifiers: Value.list(
+        List.obj(
+          {
+            name: 'Username modifiers',
+            description: 'Miners addresses to distribute shares',
+          },
+          {
+            spec: InputSpec.of({
+              name: Value.text({
+                name: 'Modifier name',
+                default: null,
+                description: 'User defined modifier name',
+                required: true,
+              }),
+              addresses: Value.list(
+                List.obj(
+                  {
+                    name: 'Modifier Address',
+                  },
+                  {
+                    spec: InputSpec.of({
+                      address: Value.text({
+                        name: 'Bitcoin address',
+                        required: true,
+                        default: null,
+                        patterns: [
+                          {
+                            regex: '[0-9a-zA-Z]{20,88}',
+                            description: 'Must be a valid Bitcoin address.',
+                          },
+                        ],
+                      }),
+                      split: Value.number({
+                        name: 'Address split percentage',
+                        required: true,
+                        integer: false,
+                        default: null,
+                        min: 0,
+                        max: 1,
+                      }),
+                    }),
+                  },
+                ),
+              ),
+            }),
+          },
+        ),
+      ),
     }),
   ),
   mining: Value.object(
@@ -230,19 +279,19 @@ export const inputSpecSpec = InputSpec.of({
         maxLength: null,
       }),
       coinbase_unique_id: Value.number({
-          name: 'Coinbase Unique ID',
-          description:
-            'A unique ID between 1 and 65535. This is appended to the coinbase. Make unique per instance of datum with the same coinbase tags.',
-          warning: null,
-          default: 120,
-          required: false,
-          min: 1,
-          max: 65535,
-          step: null,
-          integer: true,
-          units: null,
-          placeholder: null,
-        }),
+        name: 'Coinbase Unique ID',
+        description:
+          'A unique ID between 1 and 65535. This is appended to the coinbase. Make unique per instance of datum with the same coinbase tags.',
+        warning: null,
+        default: 120,
+        required: false,
+        min: 1,
+        max: 65535,
+        step: null,
+        integer: true,
+        units: null,
+        placeholder: null,
+      }),
     }),
   ),
   api: Value.object(
@@ -405,5 +454,5 @@ export const inputSpecSpec = InputSpec.of({
     }),
   ),
 })
-export const matchInputSpecSpec = inputSpecSpec.validator
+export const matchInputSpecSpec = inputSpec.validator
 export type InputSpecSpec = typeof matchInputSpecSpec._TYPE
