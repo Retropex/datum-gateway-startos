@@ -8,6 +8,8 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/ocean-xyz/datum-gateway',
   supportSite: 'https://ocean.xyz',
   marketingSite: 'https://ocean.xyz',
+  docsUrl:
+    'https://github.com/OCEAN-xyz/datum-gateway-startos/blob/next/instructions.md', //@TODO update me for main branch
   donationUrl: null,
   description: {
     short: 'Make block templates and issue work to your miners',
