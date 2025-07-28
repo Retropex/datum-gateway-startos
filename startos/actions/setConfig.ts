@@ -1,5 +1,5 @@
 import { sdk } from '../sdk'
-import { configJson, configJsonShape } from '../fileModels/config.json'
+import { configJson } from '../fileModels/config.json'
 import { inputSpec } from './config/spec'
 
 type OutputType = {
@@ -57,12 +57,12 @@ export const setConfig = sdk.Action.withInput(
       },
     )
 
-    return { ...config, ...{ stratum: {...config.stratum, ...output }} }
+    return { ...config, ...{ stratum: { ...config.stratum, ...output }} }
   },
 
   // the execution function
   async ({ effects, input }) => {
-    const output: any = input // typeof configJsonShape._TYPE
+    const output: any = input
     const stratumOutput: OutputType = { username_modifiers: {} }
 
     input.stratum.username_modifiers.forEach((modifier) => {

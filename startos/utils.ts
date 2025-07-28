@@ -1,24 +1,26 @@
 export const uiPort = 7152
 export const stratumPort = 23334
-
+export const knotsMountpoint = '/mnt/knots'
 export const randomPassword = {
   charset: 'a-z,A-Z,1-9,!,@,$,%,&,*',
   len: 22,
 }
 
+// Full example: https://gist.github.com/Retropex/dfee0a1bd9c8f132dab236cda1873f14
 export const configDefaults = {
   bitcoind: {
+    rpccookiefile: `${knotsMountpoint}/.cookie`,
     rpcurl: 'http://bitcoind.startos:8332',
-    rpcuser: '',
-    rpcpassword: '',
     work_update_seconds: 40,
     notify_fallback: true,
   },
   stratum: {
+    listen_addr: '', // blank defaults to all
     listen_port: 23334,
     max_clients_per_thread: 128,
     max_threads: 8,
     max_clients: 1024,
+    trust_proxy: '-1',
     vardiff_min: 16384,
     vardiff_target_shares_min: 8,
     vardiff_quickdiff_count: 8,
@@ -38,8 +40,9 @@ export const configDefaults = {
     save_submitblocks_dir: '',
   },
   api: {
-    listen_port: 0, // 0 = disabled
     admin_password: '',
+    listen_port: 0, // 0 = disabled
+    listen_addr: '', // blank defaults to all
     modify_conf: false,
   },
   extra_block_submissions: {

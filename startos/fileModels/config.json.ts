@@ -1,7 +1,7 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
 import { configDefaults } from '../utils'
 
-const { object, string, number, boolean, arrayOf, dictionary } = matches
+const { object, string, number, boolean, arrayOf, dictionary, literal } = matches
 
 const {
   bitcoind,
@@ -15,13 +15,13 @@ const {
 
 export const configJsonShape = object({
   bitcoind: object({
+    rpccookiefile: literal(bitcoind.rpccookiefile), // rpcuser and rpcpassword keys *should not exist* so cookie is used
     rpcurl: string.onMismatch(bitcoind.rpcurl),
-    rpcuser: string.onMismatch(bitcoind.rpcuser),
-    rpcpassword: string.onMismatch(bitcoind.rpcpassword),
     work_update_seconds: number.onMismatch(bitcoind.work_update_seconds),
     notify_fallback: boolean.onMismatch(bitcoind.notify_fallback),
   }),
   stratum: object({
+    listen_addr: string.onMismatch(stratum.listen_addr),
     listen_port: number.onMismatch(stratum.listen_port),
     max_clients_per_thread: number.onMismatch(stratum.max_clients_per_thread),
     max_threads: number.onMismatch(stratum.max_threads),
@@ -41,7 +41,10 @@ export const configJsonShape = object({
     idle_timeout_max_last_work: number.onMismatch(
       stratum.idle_timeout_max_last_work,
     ),
-    username_modifiers: dictionary([string, dictionary([string, number])]).onMismatch(stratum.username_modifiers)
+    username_modifiers: dictionary([
+      string,
+      dictionary([string, number]),
+    ]).onMismatch(stratum.username_modifiers),
   }),
   mining: object({
     pool_address: string.onMismatch(mining.pool_address),
@@ -51,12 +54,13 @@ export const configJsonShape = object({
   }),
   api: object({
     listen_port: number.onMismatch(api.listen_port),
+    listen_addr: string.onMismatch(api.listen_addr),
     admin_password: string.onMismatch(api.admin_password),
-    modify_conf: boolean.onMismatch(api.modify_conf),
+    modify_conf: literal(false),
   }),
-  // extra_block_submissions: arrayOf(string).onMismatch(
-  //   extra_block_submissions.urls,
-  // ),
+  extra_block_submissions: arrayOf(string).onMismatch(
+    extra_block_submissions.urls,
+  ),
   logger: object({
     log_to_stderr: boolean.onMismatch(logger.log_to_stderr),
     log_to_file: boolean.onMismatch(logger.log_to_file),
