@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { stratumPort, uiPort } from './utils'
 import { manifest } from 'bitcoin-knots/startos/manifest'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
@@ -42,10 +42,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       },
       requires: [],
     })
-    .addHealthCheck('stratumInterface', {
+    .addHealthCheck('stratum-interface', {
       ready: {
         display: 'Stratum Interface',
-        fn: () => sdk.healthCheck.checkWebUrl(effects, 'http://datum.startos:23334', {
+        fn: () => sdk.healthCheck.checkPortListening(effects, stratumPort, {
           timeout: 1000,
           successMessage: `Stratum server is available`,
           errorMessage: `Stratum server is unavailable`,
