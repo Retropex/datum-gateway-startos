@@ -85,6 +85,9 @@ export const setConfig = sdk.Action.withInput(
       output.datum.pooled_mining_only = false
     } else if (input.datum.reward_sharing === 'require') {
       output.datum.pooled_mining_only = true
+      if (input.datum.pool_host === "") {
+        output.datum.pool_host = "datum-beta1.mine.ocean.xyz"
+      }
     }
 
     configJson.merge(effects, output)
