@@ -56,11 +56,7 @@ export const configJsonShape = object({
     listen_port: number.onMismatch(api.listen_port),
     listen_addr: string.onMismatch(api.listen_addr),
     admin_password: string.onMismatch(api.admin_password),
-    modify_conf: literal(false),
   }),
-  extra_block_submissions: arrayOf(string).onMismatch(
-    extra_block_submissions.urls,
-  ),
   logger: object({
     log_to_stderr: boolean.onMismatch(logger.log_to_stderr),
     log_to_file: boolean.onMismatch(logger.log_to_file),
@@ -89,3 +85,10 @@ export const configJson = FileHelper.json(
   },
   configJsonShape,
 )
+
+export async function ensureConfigFile(effects: any) {
+  const exists = await configJson.read().const(effects)
+  if (!exists) {
+    await configJson.write(effects, configDefaults)
+  }
+}

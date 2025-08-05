@@ -1,7 +1,7 @@
 import { utils } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 import { randomPassword } from '../utils'
-import { configJson } from '../fileModels/config.json'
+import { configJson, ensureConfigFile } from '../fileModels/config.json'
 
 export const resetPassword = sdk.Action.withoutInput(
   // id
@@ -27,6 +27,9 @@ export const resetPassword = sdk.Action.withoutInput(
 
   // the execution function
   async ({ effects }) => {
+    
+    await ensureConfigFile(effects)
+    
     const admin_password = utils.getDefaultString(randomPassword)
 
     await configJson.merge(effects, { api: { admin_password } })

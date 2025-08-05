@@ -1,5 +1,5 @@
 import { sdk } from '../sdk'
-import { configJson } from '../fileModels/config.json'
+import { configJson, ensureConfigFile } from '../fileModels/config.json'
 import { inputSpec } from './config/spec'
 
 type OutputType = {
@@ -36,6 +36,7 @@ export const setConfig = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async ({ effects }) => {
+    await ensureConfigFile(effects)
     const config = await configJson.read().const(effects)
     if (!config) throw new Error('Config file does not exist')
     const output: InputType = { username_modifiers: [] }

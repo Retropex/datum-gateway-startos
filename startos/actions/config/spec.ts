@@ -36,8 +36,6 @@ export const inputSpec = InputSpec.of({
         units: 'seconds',
         placeholder: null,
       }),
-      blocknotify:
-        /* TODO deal with point removed point "Block Notify" */ null as any,
     }),
   ),
   stratum: Value.object(
