@@ -78,6 +78,15 @@ export const setConfig = sdk.Action.withInput(
 
     output.stratum = { ...input.stratum, ...stratumOutput }
 
+    if (input.datum.reward_sharing === 'never') {
+      output.datum.pool_host = ""
+      output.datum.pooled_mining_only = false
+    } else if (input.datum.reward_sharing === 'prefer') {
+      output.datum.pooled_mining_only = false
+    } else if (input.datum.reward_sharing === 'require') {
+      output.datum.pooled_mining_only = true
+    }
+
     configJson.merge(effects, output)
   },
 )
