@@ -3,23 +3,13 @@
 
 Quick-start guide for those already mining on OCEAN:
 
-1. Bitcoin Knots is required. This can be found in the Start9 Community Marketplace.
+1. Bitcoin Knots is required.
 
-2. Set up simpleproxy as explained in the last section of this document.
+2. Put a valid Bitcoin address into Datum-Gateway's config and start the service.
 
-3. Put a valid Bitcoin address into Datum-Gateway's config and start the service.
-
-4. Point your miners to the IP and PORT of your Start9 Server and Datum-Gateway service respectively. *(Something like 192.168.x.y replacing x and y as necessary for the Start9 Server IP. 23334 is the default port for Datum-Gateway.)*
+3. Point your miners to the IP and PORT of your Start9 Server and Datum-Gateway service respectively. *(Something like 192.168.x.y replacing x and y as necessary for the Start9 Server IP. 23334 is the default port for Datum-Gateway.)*
 
 See below for more comprehensive instructions.
-
-# StartOS Version
-
-**Warning** - using Datum-Gateway on StartOS v0.3.5.1 in a typical scenario requires making the service accessible over LAN via IP:Port. This requires tinkering with your StartOS server as most Bitcoin mining hardware cannot use mDNS.
-
-If you feel comfortable doing that, follow the instructions for installing `simpleproxy` at the bottom of this document.
-
-If you do not, you should wait for StartOS v0.3.6.
 
 # Basic Information
 
@@ -90,31 +80,3 @@ With default settings, you will pool-mine on OCEAN with no failover. If your con
 If you wish to failover to non-pool mining, simply disable **"Pool Mining Only"**.
 
 If you wish to intentionally non-pool mine that requires removing the text in **Datum Pool Host** as in the prior section.
-
-# Installing and Running simpleproxy
-
-**For StartOS v0.3.5.1 you'll need to do the following:**
-
-ssh in to your Start9 Server <https://docs.start9.com/0.3.5.x/user-manual/ssh>
-
-Copy and paste the following lines of code one by one:
-
-`sudo -i`
-
-`/usr/lib/startos/scripts/chroot-and-upgrade`
-
-`apt install simpleproxy -y`
-
-Now copy and paste the following chunk of code in one command:
-
-echo -e '[Unit]\nDescription=Simpleproxy Datum Forward\nWants=podman.service\nAfter=podman.service\n\n[Service]\nType=simple\nRestart=always\nRestartSec=3\nExecStartPre=/bin/bash -c "/bin/systemctl set-environment IP=$(ip route | grep default | awk '\''{print $9}'\'')"\nExecStart=/usr/bin/simpleproxy -L ${IP}:23334 -R datum.embassy:23335\n\n[Install]\nWantedBy=multi-user.target' > /lib/systemd/system/simpleproxy.datum.service
-
-Next, copy and paste the following:
-
-`systemctl enable simpleproxy.datum.service`
-
-Then finally:
-
-`exit`
-
-Your server will now restart and will be accessible to miners on your LAN!
