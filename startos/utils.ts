@@ -16,7 +16,7 @@ export const configDefaults = {
   },
   stratum: {
     listen_addr: '', // blank defaults to all
-    listen_port: 23334,
+    listen_port: stratumPort,
     max_clients_per_thread: 128,
     max_threads: 8,
     max_clients: 1024,
@@ -41,7 +41,7 @@ export const configDefaults = {
   },
   api: {
     admin_password: '',
-    listen_port: 0, // 0 = disabled
+    listen_port: uiPort, // 0 = disabled
     listen_addr: '', // blank defaults to all
     modify_conf: false,
   },

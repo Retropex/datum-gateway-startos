@@ -61,7 +61,7 @@ export const inputSpec = InputSpec.of({
         name: 'Maximum Clients Per Thread',
         description: 'Maximum clients per Stratum server thread.',
         warning: null,
-        default: 1000,
+        default: 128,
         required: false,
         min: 0,
         max: null,
@@ -88,7 +88,7 @@ export const inputSpec = InputSpec.of({
         description:
           'Maximum total Stratum clients before rejecting connections (integer, default: 2048)',
         warning: null,
-        default: 2048,
+        default: 1024,
         required: false,
         min: 0,
         max: null,
@@ -264,7 +264,7 @@ export const inputSpec = InputSpec.of({
       }),
       coinbase_tag_primary: Value.text({
         name: 'Primary Coinbase Tag',
-        default: 'Datum User',
+        default: 'DATUM Gateway',
         required: false,
         description:
           "Text to have in the primary coinbase tag when solo (overridden by DATUM Pool with the pool's name.)",
@@ -278,7 +278,7 @@ export const inputSpec = InputSpec.of({
       }),
       coinbase_tag_secondary: Value.text({
         name: 'Secondary Coinbase Tag',
-        default: 'Datum Miner',
+        default: 'DATUM User',
         required: false,
         description:
           "Text to have in the secondary coinbase tag. If you're mining on a pool, this is what you label your blocks with.",
@@ -295,7 +295,7 @@ export const inputSpec = InputSpec.of({
         description:
           'A unique ID between 1 and 65535. This is appended to the coinbase. Make unique per instance of datum with the same coinbase tags.',
         warning: null,
-        default: 120,
+        default: 4242,
         required: false,
         min: 1,
         max: 65535,
