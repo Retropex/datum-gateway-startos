@@ -21,7 +21,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         command: [
           'datum_gateway',
           '-c',
-          '/media/startos/volumes/main/config.json',
+          '/data/config.json',
         ],
       },
       ready: {
