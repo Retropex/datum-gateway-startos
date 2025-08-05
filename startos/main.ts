@@ -1,5 +1,6 @@
 import { sdk } from './sdk'
 import { uiPort } from './utils'
+import { manifest } from 'bitcoin-knots/startos/manifest'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('Starting Datum Gateway...')
@@ -14,6 +15,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           subpath: null,
           mountpoint: '/data',
           readonly: false,
+        })
+        .mountDependency<typeof manifest>({
+        dependencyId: 'bitcoind',
+        volumeId: 'main',
+        subpath: null,
+        mountpoint: '/mnt/knots',
+        readonly: true,
         }),
         'datum-sub',
       ),
