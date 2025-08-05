@@ -20,7 +20,7 @@ export const configDefaults = {
     max_clients_per_thread: 128,
     max_threads: 8,
     max_clients: 1024,
-    trust_proxy: '-1',
+    trust_proxy: -1,
     vardiff_min: 16384,
     vardiff_target_shares_min: 8,
     vardiff_quickdiff_count: 8,

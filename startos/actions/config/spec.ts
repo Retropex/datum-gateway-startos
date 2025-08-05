@@ -97,6 +97,20 @@ export const inputSpec = InputSpec.of({
         units: null,
         placeholder: null,
       }),
+      trust_proxy: Value.number({
+        name: 'Trust PROXY',
+        description:
+          'Number of PROXY line trusted',
+        warning: null,
+        default: -1,
+        required: false,
+        min: -1,
+        max: null,
+        step: null,
+        integer: true,
+        units: null,
+        placeholder: null,
+      }),
       vardiff_min: Value.number({
         name: 'Minimum Difficulty',
         description: 'Work difficulty floor (integer, default: 16384)',

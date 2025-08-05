@@ -26,6 +26,7 @@ export const configJsonShape = object({
     max_clients_per_thread: number.onMismatch(stratum.max_clients_per_thread),
     max_threads: number.onMismatch(stratum.max_threads),
     max_clients: number.onMismatch(stratum.max_clients),
+    trust_proxy: number.onMismatch(stratum.trust_proxy),
     vardiff_min: number.onMismatch(stratum.vardiff_min),
     vardiff_target_shares_min: number.onMismatch(
       stratum.vardiff_target_shares_min,
