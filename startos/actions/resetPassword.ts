@@ -20,7 +20,7 @@ export const resetPassword = sdk.Action.withoutInput(
       description: hasPass ? `Reset ${desc}` : `Create ${desc}`,
       warning: null,
       allowedStatuses: 'any',
-      group: null,
+      group: 'Config',
       visibility: 'enabled',
     }
   },

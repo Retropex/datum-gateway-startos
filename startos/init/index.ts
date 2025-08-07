@@ -5,6 +5,7 @@ import { versionGraph } from '../install/versionGraph'
 import { actions } from '../actions'
 import { restoreInit } from '../backups'
 import { taskResetPassword } from './taskResetPassword'
+import { taskConfigPoolAddress } from './taskConfigPoolAddress'
 
 export const init = sdk.setupInit(
   restoreInit,
@@ -13,6 +14,7 @@ export const init = sdk.setupInit(
   setDependencies,
   actions,
   taskResetPassword,
+  taskConfigPoolAddress,
 )
 
 export const uninit = sdk.setupUninit(versionGraph)

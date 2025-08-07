@@ -27,7 +27,7 @@ export const setConfig = sdk.Action.withInput(
     description: 'Set configuration options for Datum',
     warning: null,
     allowedStatuses: 'any',
-    group: null,
+    group: 'Config',
     visibility: 'enabled',
   }),
 
