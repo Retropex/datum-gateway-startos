@@ -23,8 +23,10 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   // Stratum
   const stratumMulti = sdk.MultiHost.of(effects, 'stratum-multi')
   const stratumMultiOrigin = await stratumMulti.bindPort(stratumPort, {
-    protocol: 'http',
+    protocol: null,
+    addSsl: null,
     preferredExternalPort: stratumPort,
+    secure: { ssl: false },
   })
   const stratum = sdk.createInterface(effects, {
     name: 'Stratum Server',
