@@ -1,17 +1,9 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
-import { configDefaults } from '../utils'
+import { configDefaults, dataDir } from '../utils'
 
-const { object, string, number, boolean, arrayOf, dictionary, literal } = matches
+const { object, string, number, boolean, dictionary, literal } = matches
 
-const {
-  bitcoind,
-  stratum,
-  mining,
-  api,
-  extra_block_submissions,
-  logger,
-  datum,
-} = configDefaults
+const { bitcoind, stratum, mining, api, logger, datum } = configDefaults
 
 export const configJsonShape = object({
   bitcoind: object({
@@ -82,7 +74,7 @@ export const configJsonShape = object({
 export const configJson = FileHelper.json(
   {
     volumeId: 'main',
-    subpath: '/config.json',
+    subpath: `${dataDir}/datum_gateway_config.json`,
   },
   configJsonShape,
 )

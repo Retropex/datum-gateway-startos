@@ -1,7 +1,8 @@
-import { utils } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
-import { randomPassword } from '../utils'
-import { configJson, ensureConfigFile } from '../fileModels/config.json'
+import {
+  configJson,
+  ensureConfigFile,
+} from '../fileModels/datum_gateway_config.json'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
@@ -28,8 +29,7 @@ export const configPoolAddress = sdk.Action.withInput(
   // metadata
   async ({ effects }) => ({
     name: 'Config pool address',
-    description:
-      'Config the pool address to mine on.',
+    description: 'Config the pool address to mine on.',
     warning: null,
     allowedStatuses: 'any',
     group: 'Config',
@@ -45,13 +45,13 @@ export const configPoolAddress = sdk.Action.withInput(
   // execution function
   async ({ effects, input }) => {
     const { address } = input
-    
+
     const pool_address = address
-    
+
     await ensureConfigFile(effects)
-    
+
     await configJson.merge(effects, { mining: { pool_address } })
-    
+
     return {
       version: '1',
       title: 'Sucess',

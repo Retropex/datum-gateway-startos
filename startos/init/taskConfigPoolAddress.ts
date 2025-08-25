@@ -1,5 +1,5 @@
 import { configPoolAddress } from '../actions/configPoolAddress'
-import { configJson } from '../fileModels/config.json'
+import { configJson } from '../fileModels/datum_gateway_config.json'
 import { sdk } from '../sdk'
 
 export const taskConfigPoolAddress = sdk.setupOnInit(async (effects) => {

@@ -1,4 +1,10 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { SDKImageInputSpec } from '@start9labs/start-sdk/base/lib/types/ManifestTypes'
+
+const BUILD = process.env.BUILD || ''
+
+const architectures =
+  BUILD === 'x86_64' || BUILD === 'aarch64' ? [BUILD] : ['x86_64', 'aarch64']
 
 export const manifest = setupManifest({
   id: 'datum',
@@ -9,7 +15,7 @@ export const manifest = setupManifest({
   supportSite: 'https://ocean.xyz',
   marketingSite: 'https://ocean.xyz',
   docsUrl:
-    'https://github.com/OCEAN-xyz/datum-gateway-startos/blob/next/instructions.md', //@TODO update me for main branch
+    'https://github.com/OCEAN-xyz/datum-gateway-startos/blob/next/docs/instructions.md', //@TODO update me for main branch
   donationUrl: null,
   description: {
     short: 'Make block templates and issue work to your miners',
@@ -24,9 +30,12 @@ export const manifest = setupManifest({
           workdir: '.',
         },
       },
-    },
+      arch: architectures,
+    } as SDKImageInputSpec,
   },
-  hardwareRequirements: {},
+  hardwareRequirements: {
+    arch: architectures,
+  },
   alerts: {
     install: null,
     update: null,

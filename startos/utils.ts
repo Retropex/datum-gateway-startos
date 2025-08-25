@@ -1,5 +1,6 @@
 export const uiPort = 7152
 export const stratumPort = 23334
+export const dataDir = '/root/data'
 export const knotsMountpoint = '/mnt/knots'
 export const randomPassword = {
   charset: 'a-z,A-Z,1-9,!,@,$,%,&,*',
@@ -30,7 +31,7 @@ export const configDefaults = {
     idle_timeout_no_subscribe: 15,
     idle_timeout_no_shares: 7200,
     idle_timeout_max_last_work: 0,
-    username_modifiers: {}
+    username_modifiers: {},
   },
   mining: {
     pool_address: '',
@@ -44,9 +45,6 @@ export const configDefaults = {
     listen_port: uiPort, // 0 = disabled
     listen_addr: '', // blank defaults to all
     modify_conf: false,
-  },
-  extra_block_submissions: {
-    urls: [], // include auth info eg. http://user:pass@IP
   },
   logger: {
     log_to_console: true,

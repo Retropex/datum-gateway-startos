@@ -1,6 +1,9 @@
-import { sdk } from '../sdk'
-import { configJson, ensureConfigFile } from '../fileModels/config.json'
-import { inputSpec } from './config/spec'
+import { sdk } from '../../sdk'
+import {
+  configJson,
+  ensureConfigFile,
+} from '../../fileModels/datum_gateway_config.json'
+import { inputSpec } from './spec'
 
 type OutputType = {
   username_modifiers: {
@@ -58,7 +61,7 @@ export const setConfig = sdk.Action.withInput(
       },
     )
 
-    return { ...config, ...{ stratum: { ...config.stratum, ...output }} }
+    return { ...config, ...{ stratum: { ...config.stratum, ...output } } }
   },
 
   // the execution function
@@ -79,14 +82,14 @@ export const setConfig = sdk.Action.withInput(
     output.stratum = { ...input.stratum, ...stratumOutput }
 
     if (input.datum.reward_sharing === 'never') {
-      output.datum.pool_host = ""
+      output.datum.pool_host = ''
       output.datum.pooled_mining_only = false
     } else if (input.datum.reward_sharing === 'prefer') {
       output.datum.pooled_mining_only = false
     } else if (input.datum.reward_sharing === 'require') {
       output.datum.pooled_mining_only = true
-      if (input.datum.pool_host === "") {
-        output.datum.pool_host = "datum-beta1.mine.ocean.xyz"
+      if (input.datum.pool_host === '') {
+        output.datum.pool_host = 'datum-beta1.mine.ocean.xyz'
       }
     }
 

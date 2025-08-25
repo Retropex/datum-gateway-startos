@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { stratumPort, uiPort } from './utils'
+import { stratumPort, uiPort, dataDir } from './utils'
 import { manifest } from 'bitcoin-knots/startos/manifest'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
@@ -10,26 +10,27 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       subcontainer: await sdk.SubContainer.of(
         effects,
         { imageId: 'datum' },
-        sdk.Mounts.of().mountVolume({
-          volumeId: 'main',
-          subpath: null,
-          mountpoint: '/data',
-          readonly: false,
-        })
-        .mountDependency<typeof manifest>({
-        dependencyId: 'bitcoind',
-        volumeId: 'main',
-        subpath: null,
-        mountpoint: '/mnt/knots',
-        readonly: true,
-        }),
+        sdk.Mounts.of()
+          .mountVolume({
+            volumeId: 'main',
+            subpath: null,
+            mountpoint: dataDir,
+            readonly: false,
+          })
+          .mountDependency<typeof manifest>({
+            dependencyId: 'bitcoind',
+            volumeId: 'main',
+            subpath: null,
+            mountpoint: '/mnt/knots',
+            readonly: true,
+          }),
         'datum-sub',
       ),
       exec: {
         command: [
           'datum_gateway',
           '-c',
-          '/data/config.json',
+          `${dataDir}/datum_gateway_config.json`,
         ],
       },
       ready: {
@@ -45,11 +46,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     .addHealthCheck('stratum-interface', {
       ready: {
         display: 'Stratum Interface',
-        fn: () => sdk.healthCheck.checkPortListening(effects, stratumPort, {
-          timeout: 1000,
-          successMessage: `Stratum server is available`,
-          errorMessage: `Stratum server is unavailable`,
-        }),
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, stratumPort, {
+            timeout: 1000,
+            successMessage: `Stratum server is available`,
+            errorMessage: `Stratum server is unavailable`,
+          }),
       },
       requires: ['primary'],
     })
