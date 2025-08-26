@@ -1,6 +1,6 @@
 export const uiPort = 7152
 export const stratumPort = 23334
-export const dataDir = '/root/data'
+export const dataDir = '/data'
 export const knotsMountpoint = '/mnt/knots'
 export const randomPassword = {
   charset: 'a-z,A-Z,1-9,!,@,$,%,&,*',

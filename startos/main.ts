@@ -14,7 +14,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           .mountVolume({
             volumeId: 'main',
             subpath: null,
-            mountpoint: dataDir,
+            mountpoint: '/root',
             readonly: false,
           })
           .mountDependency<typeof manifest>({
@@ -30,7 +30,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         command: [
           'datum_gateway',
           '-c',
-          `${dataDir}/datum_gateway_config.json`,
+          `/root/${dataDir}/datum_gateway_config.json`,
         ],
       },
       ready: {
