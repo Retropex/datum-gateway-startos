@@ -22,6 +22,7 @@ export const inputSpec = InputSpec.of({
         patterns: [],
         minLength: null,
         maxLength: null,
+        immutable: true,
       }),
       work_update_seconds: Value.number({
         name: 'Work Update (Seconds)',
@@ -56,6 +57,7 @@ export const inputSpec = InputSpec.of({
         integer: false,
         units: null,
         placeholder: null,
+        immutable: true,
       }),
       max_clients_per_thread: Value.number({
         name: 'Maximum Clients Per Thread',
@@ -324,6 +326,7 @@ export const inputSpec = InputSpec.of({
         integer: true,
         units: null,
         placeholder: null,
+        immutable: true,
       }),
     }),
   ),

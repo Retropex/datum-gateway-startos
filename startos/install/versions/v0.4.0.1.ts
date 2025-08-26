@@ -8,10 +8,15 @@ export const v_0_4_0_1 = VersionInfo.of({
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
-      await configJson.merge(effects, {
-        stratum: { listen_port: configDefaults.stratum.listen_port },
-      })
-
+      
+      // update the config to work with the new version without losing user config
+      const config = await configJson.read().const(effects)
+      if (config !== null) {
+        await configJson.write(effects, config)
+      } else {
+        await configJson.write(effects, configDefaults)
+      }
+      
       await rm('/media/startos/volumes/main/start9', { recursive: true }).catch(
         console.error,
       )

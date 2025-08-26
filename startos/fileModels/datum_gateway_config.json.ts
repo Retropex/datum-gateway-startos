@@ -7,14 +7,14 @@ const { bitcoind, stratum, mining, api, logger, datum } = configDefaults
 
 export const configJsonShape = object({
   bitcoind: object({
-    rpccookiefile: literal(bitcoind.rpccookiefile), // rpcuser and rpcpassword keys *should not exist* so cookie is used
-    rpcurl: string.onMismatch(bitcoind.rpcurl),
+    rpccookiefile: literal(bitcoind.rpccookiefile).onMismatch(bitcoind.rpccookiefile), // rpcuser and rpcpassword keys *should not exist* so cookie is used
+    rpcurl: literal(bitcoind.rpcurl).onMismatch(bitcoind.rpcurl),
     work_update_seconds: number.onMismatch(bitcoind.work_update_seconds),
     notify_fallback: boolean.onMismatch(bitcoind.notify_fallback),
   }),
   stratum: object({
     listen_addr: string.onMismatch(stratum.listen_addr),
-    listen_port: number.onMismatch(stratum.listen_port),
+    listen_port: literal(stratum.listen_port).onMismatch(stratum.listen_port),
     max_clients_per_thread: number.onMismatch(stratum.max_clients_per_thread),
     max_threads: number.onMismatch(stratum.max_threads),
     max_clients: number.onMismatch(stratum.max_clients),
@@ -46,7 +46,7 @@ export const configJsonShape = object({
     coinbase_unique_id: number.onMismatch(mining.coinbase_unique_id),
   }),
   api: object({
-    listen_port: number.onMismatch(api.listen_port),
+    listen_port: literal(api.listen_port).onMismatch(api.listen_port),
     listen_addr: string.onMismatch(api.listen_addr),
     admin_password: string.onMismatch(api.admin_password),
   }),
