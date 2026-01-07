@@ -81,7 +81,8 @@ export const migration: T.ExpectedExports.migration =
           true,
           { version: "0.3.1", type: "down"}
         )
-      },"0.4.0": {
+      },
+      "0.4.0": {
         up: compat.migrations.updateConfig(
           (config: any) => {
             config.stratum.username_modifiers = [];
@@ -98,7 +99,25 @@ export const migration: T.ExpectedExports.migration =
           true,
           { version: "0.4.0", type: "down"}
         )
-      }
+      },
+      "0.4.1": {
+        up: compat.migrations.updateConfig(
+          (config: any) => {
+            config.api.allow_insecure_auth = false;
+            return config;
+          },
+          true,
+          { version: "0.4.1", type: "up"}
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config.api.allow_insecure_auth;
+            return config;
+          },
+          true,
+          { version: "0.4.1", type: "down"}
+        )
+      },
     },
-    "0.4.0"
+    "0.4.1"
   );

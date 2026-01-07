@@ -286,6 +286,14 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
         default: "",
         nullable: true,
       },
+      allow_insecure_auth: {
+        type: "boolean",
+        name: "Allow Insecure Authentication",
+        description: "Allow insecure authentication (required for Safari)",
+        default: false,
+        nullable: true,
+        warning: 'This lowers security of the dashboard login. Use it only on trusted networks.',
+      },
     },
   },
   // "extra_block_submissions": {
