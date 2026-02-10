@@ -25,7 +25,7 @@ never)
     ;;
 esac
 
-yq eval -o=json '(.stratum.username_modifiers) = (.stratum.username_modifiers | map({"key": .name, "value": (.addresses | map({(.address): (.split | tonumber)}) | .[] as $o ireduce ({}; . + $o))}) | from_entries)' /root/start9/config.yaml > /root/data/datum_gateway_config.json
+yq eval -o=json '(.stratum.username_modifiers) = (.stratum.username_modifiers | map({"key": .name, "value": (.addresses | map({((.address // "") | sub("^null$"; "")): (.split | tonumber)}) | .[] as $o ireduce ({}; . + $o))}) | from_entries)' /root/start9/config.yaml > /root/data/datum_gateway_config.json
 jq ${filter} /root/data/datum_gateway_config.json > /root/data/datum_gateway_config.json.tmp && mv /root/data/datum_gateway_config.json.tmp /root/data/datum_gateway_config.json
 printf "\n\n [i] Starting Datum Gateway ...\n\n"
 

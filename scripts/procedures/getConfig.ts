@@ -195,8 +195,8 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
                     type: "string",
                     name: "Bitcoin address",
                     description: "The bitcoin address to send to",
-                    nullable: false,
-                    pattern: "[0-9a-zA-Z]{20,88}",
+                    nullable: true,
+                    pattern: "[0-9a-zA-Z]{0,88}",
                     "pattern-description": "Must be a valid bitcoin address",
                   },
                   split: {
