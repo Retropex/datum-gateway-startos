@@ -84,13 +84,13 @@ Each configuration section has its own dedicated action:
 
 Settings **not** managed by StartOS (hardcoded or derived):
 
-| Setting                 | Value                          | Reason                                     |
-| ----------------------- | ------------------------------ | ------------------------------------------ |
-| `rpccookiefile`         | `/mnt/knots/.cookie`           | Bitcoin cookie auth via mounted volume     |
-| `rpcurl`                | bitcoind's LXC-bridge RPC URL  | Resolved at runtime by `main.ts`; omitted while bitcoind is absent (no address written until the dependency resolves) |
-| `listen_addr` (stratum) | `""` (all interfaces)          | Required for container networking          |
-| `listen_addr` (api)     | `""` (all interfaces)          | Required for container networking          |
-| `notify_fallback`       | `true`                         | Ensures block updates if blocknotify fails |
+| Setting                 | Value                         | Reason                                                                                                                |
+| ----------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `rpccookiefile`         | `/mnt/knots/.cookie`          | Bitcoin cookie auth via mounted volume                                                                                |
+| `rpcurl`                | bitcoind's LXC-bridge RPC URL | Resolved at runtime by `main.ts`; omitted while bitcoind is absent (no address written until the dependency resolves) |
+| `listen_addr` (stratum) | `""` (all interfaces)         | Required for container networking                                                                                     |
+| `listen_addr` (api)     | `""` (all interfaces)         | Required for container networking                                                                                     |
+| `notify_fallback`       | `true`                        | Ensures block updates if blocknotify fails                                                                            |
 
 ### Reward Sharing Strategy
 
