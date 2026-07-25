@@ -19,7 +19,7 @@ export const stratumInterfaceId = 'stratum'
 
 /**
  * bitcoind's RPC endpoint over the LXC bridge, as a URL. Routed through
- * `bridgeAddress`, so this `.const()` restarts main only when bitcoind's RPC
+ * `sdk.host.getBridgeAddress`, so this `.const()` restarts main only when bitcoind's RPC
  * address actually changes — install, uninstall, or port change — never on a
  * bitcoind update. `undefined` while bitcoind is absent (no address could
  * work); main omits `rpcurl` in that case and the RPC connection fails
