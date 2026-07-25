@@ -8,9 +8,7 @@ const { InputSpec, Value } = sdk
 const inputSpec = InputSpec.of({
   work_update_seconds: Value.number({
     name: i18n('Work Update (Seconds)'),
-    description: i18n(
-      'How frequently should Bitcoind send updated templates',
-    ),
+    description: i18n('How frequently should Bitcoind send updated templates'),
     required: false,
     default: null,
     placeholder: '40',

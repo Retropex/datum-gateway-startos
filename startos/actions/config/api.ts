@@ -8,9 +8,7 @@ const inputSpec = InputSpec.of({
   allow_insecure_auth: Value.toggle({
     name: i18n('Allow Insecure Authentication'),
     default: false,
-    description: i18n(
-      'Allow insecure authentication (required for Safari)',
-    ),
+    description: i18n('Allow insecure authentication (required for Safari)'),
     warning: i18n(
       'This lowers security of the dashboard login. Use it only on trusted networks.',
     ),

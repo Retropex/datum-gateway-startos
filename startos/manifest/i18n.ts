@@ -24,5 +24,5 @@ export const long = {
   pl_PL:
     'Datum Gateway umożliwia górnikom korzystanie z własnego węzła Bitcoin do generowania własnych szablonów bloków i przydzielania pracy swoim górnikom, jednocześnie dzieląc nagrody w puli lub kopiąc solo.',
   fr_FR:
-    'Datum Gateway permet aux mineurs d\'utiliser leur noeud Bitcoin pour générer leurs propres modèles de bloc et répartir le travail entre leurs mineurs, tout en partageant les récompenses sur un pool ou en minant en solo.',
+    "Datum Gateway permet aux mineurs d'utiliser leur noeud Bitcoin pour générer leurs propres modèles de bloc et répartir le travail entre leurs mineurs, tout en partageant les récompenses sur un pool ou en minant en solo.",
 }
