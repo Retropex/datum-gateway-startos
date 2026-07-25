@@ -1,23 +1,23 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.4.1:14',
+  version: '0.4.1:15',
   releaseNotes: {
-    en_US: `Resolves the addresses of connected services more reliably.
+    en_US: `Stops DATUM Gateway reloading at the moment your Bitcoin node goes away.
 
-DATUM Gateway looked up where to reach its dependencies through a field that only applies to one of the two ways a service can publish a port. It now reads the address itself, so a dependency changing how it serves TLS can no longer leave DATUM Gateway unable to find it. Nothing changes in normal operation.`,
-    es_ES: `Resuelve de forma más fiable las direcciones de los servicios conectados.
+DATUM Gateway reloads when your Bitcoin node issues new RPC credentials, which it does on every restart. That reload was previously triggered as soon as the node *began* shutting down — while its RPC was already unreachable — so DATUM Gateway was stopped and restarted against a backend that was not there yet. It now reloads only once the node is back up and has published new credentials.`,
+    es_ES: `Evita que DATUM Gateway se recargue justo cuando tu nodo Bitcoin desaparece.
 
-DATUM Gateway localizaba sus dependencias mediante un campo que solo se aplica a una de las dos formas en que un servicio puede publicar un puerto. Ahora lee la dirección en sí, de modo que si una dependencia cambia su forma de servir TLS, DATUM Gateway seguirá encontrándola. En funcionamiento normal no cambia nada.`,
-    de_DE: `Ermittelt die Adressen verbundener Dienste zuverlässiger.
+DATUM Gateway se recarga cuando tu nodo Bitcoin emite nuevas credenciales RPC, algo que hace en cada reinicio. Esa recarga se activaba en cuanto el nodo *empezaba* a apagarse — cuando su RPC ya era inalcanzable —, así que DATUM Gateway se detenía y arrancaba contra un backend que todavía no estaba. Ahora se recarga solo cuando el nodo ha vuelto y ha publicado nuevas credenciales.`,
+    de_DE: `Verhindert, dass DATUM Gateway genau dann neu lädt, wenn Ihr Bitcoin-Knoten verschwindet.
 
-DATUM Gateway suchte seine Abhängigkeiten über ein Feld, das nur für eine der beiden Arten gilt, auf die ein Dienst einen Port veröffentlichen kann. Jetzt wird die Adresse selbst gelesen, sodass eine Abhängigkeit, die ihre TLS-Bereitstellung ändert, für DATUM Gateway auffindbar bleibt. Im normalen Betrieb ändert sich nichts.`,
-    pl_PL: `Pewniej ustala adresy połączonych usług.
+DATUM Gateway lädt neu, sobald Ihr Bitcoin-Knoten neue RPC-Zugangsdaten ausgibt — was bei jedem Neustart geschieht. Dieses Neuladen wurde bisher ausgelöst, sobald der Knoten mit dem Herunterfahren *begann* — während dessen RPC bereits nicht mehr erreichbar war. DATUM Gateway wurde also gestoppt und startete gegen ein Backend, das noch nicht da war. Es lädt jetzt erst neu, wenn der Knoten wieder läuft und neue Zugangsdaten veröffentlicht hat.`,
+    pl_PL: `Zapobiega przeładowaniu DATUM Gateway dokładnie w chwili, gdy znika Twój węzeł Bitcoin.
 
-DATUM Gateway wyszukiwał swoje zależności przez pole, które dotyczy tylko jednego z dwóch sposobów publikowania portu przez usługę. Teraz odczytuje sam adres, więc zależność zmieniająca sposób udostępniania TLS nadal pozostanie odnajdywalna dla DATUM Gateway. W normalnej pracy nic się nie zmienia.`,
-    fr_FR: `Détermine plus fiablement les adresses des services connectés.
+DATUM Gateway przeładowuje się, gdy Twój węzeł Bitcoin wydaje nowe dane uwierzytelniające RPC, co robi przy każdym restarcie. Dotąd to przeładowanie uruchamiało się, gdy tylko węzeł *zaczynał* się wyłączać — a jego RPC było już nieosiągalne — więc DATUM Gateway było zatrzymywane i startowało wobec backendu, którego jeszcze nie było. Teraz przeładowuje się dopiero wtedy, gdy węzeł wróci i opublikuje nowe dane uwierzytelniające.`,
+    fr_FR: `Empêche DATUM Gateway de se recharger au moment précis où votre nœud Bitcoin disparaît.
 
-DATUM Gateway localisait ses dépendances via un champ qui ne s'applique qu'à l'un des deux modes de publication d'un port par un service. Il lit désormais l'adresse elle-même : une dépendance qui change sa façon de servir TLS reste donc trouvable par DATUM Gateway. Rien ne change en fonctionnement normal.`,
+DATUM Gateway se recharge lorsque votre nœud Bitcoin émet de nouveaux identifiants RPC, ce qu'il fait à chaque redémarrage. Ce rechargement était jusqu'ici déclenché dès que le nœud *commençait* à s'arrêter — alors que son RPC était déjà injoignable —, si bien que DATUM Gateway était arrêté puis redémarré face à un backend encore absent. Il ne se recharge désormais qu'une fois le nœud revenu et de nouveaux identifiants publiés.`,
   },
   migrations: {},
 })

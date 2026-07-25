@@ -52,9 +52,13 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   const rootfs = await datumSub.rootfs
 
-  // Restart daemon chain if bitcoind's cookie file changes
+  // Restart the daemon chain only when bitcoind writes a replacement cookie —
+  // an absent cookie means bitcoind is down.
   await FileHelper.string(`${rootfs}${knotsMountpoint}/.cookie`)
-    .read()
+    .read(
+      (cookie) => cookie,
+      (prev, next) => next === null || prev === next,
+    )
     .const(effects)
 
   return sdk.Daemons.of(effects)
