@@ -4,13 +4,15 @@
 
 # Datum Gateway on StartOS
 
-> **Upstream docs:** <https://ocean.xyz/docs/datum>
->
 > Everything not listed in this document should behave the same as upstream
-> Datum Gateway. If a feature, setting, or behavior is not mentioned here,
-> the upstream documentation is accurate and fully applicable.
+> DATUM Gateway. If a feature, setting, or behavior is not mentioned here, the
+> upstream documentation is accurate and fully applicable — see the
+> Documentation section of `instructions.md` for links.
 
-DATUM (Decentralized Alternative Templates for Universal Mining) enables miners to create custom block templates using their own Bitcoin node, either for pooled mining on DATUM-supporting pools (such as OCEAN) or for solo mining. See the [upstream repo](https://github.com/ocean-xyz/datum-gateway) for general Datum Gateway documentation.
+[DATUM Gateway](https://github.com/ocean-xyz/datum-gateway) lets ASIC miners build their own block templates against a local Bitcoin node, mining solo or through a DATUM-supporting pool. This package wires it to your node, publishes the stratum endpoint for your miners, and asks the node to notify it on every new block.
+
+- **Upstream repo:** <https://github.com/ocean-xyz/datum-gateway>
+- **Wrapper repo:** <https://github.com/Start9Labs/datum-gateway-startos>
 
 ---
 
@@ -18,190 +20,162 @@ DATUM (Decentralized Alternative Templates for Universal Mining) enables miners 
 
 - [Image and Container Runtime](#image-and-container-runtime)
 - [Volume and Data Layout](#volume-and-data-layout)
-- [Installation and First-Run Flow](#installation-and-first-run-flow)
-- [Configuration Management](#configuration-management)
-- [Network Access and Interfaces](#network-access-and-interfaces)
-- [Actions](#actions-startos-ui)
-- [Backups and Restore](#backups-and-restore)
-- [Health Checks](#health-checks)
+- [File Models](#file-models)
 - [Dependencies](#dependencies)
+- [Network Access and Interfaces](#network-access-and-interfaces)
+- [Installation and First-Run Flow](#installation-and-first-run-flow)
+- [Actions](#actions)
+- [Tasks](#tasks)
+- [Health Checks](#health-checks)
+- [Backups and Restore](#backups-and-restore)
 - [Limitations and Differences](#limitations-and-differences)
-- [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
-- [Contributing](#contributing)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
 ## Image and Container Runtime
 
-| Property      | Value                                                                        |
-| ------------- | ---------------------------------------------------------------------------- |
-| Image         | Custom Dockerfile (multi-stage Debian Bookworm build from upstream C source) |
-| Architectures | x86_64, aarch64                                                              |
-| Entrypoint    | `datum_gateway -c /root/data/datum_gateway_config.json`                      |
+One image, built here from upstream's source, and one subcontainer.
 
-The custom Dockerfile compiles `datum_gateway` from source using CMake with dependencies: libmicrohttpd, libjansson, libcurl, libgcrypt, and libsodium.
+| Property      | Value                                                        |
+| ------------- | ------------------------------------------------------------ |
+| Image         | Built from `Dockerfile` against the `datum_gateway/` source  |
+| Architectures | x86_64, aarch64                                              |
+| Command       | `datum_gateway -c <config>`                                  |
+| Subcontainer  | `datum-sub` — the `datum` daemon, and the one to `attach` to |
 
 ## Volume and Data Layout
 
-| Volume | Mount Point | Purpose                               |
-| ------ | ----------- | ------------------------------------- |
-| `main` | `/root`     | All Datum Gateway data (config, logs) |
+One volume, plus a read-only view of the Bitcoin node's.
 
-The Bitcoin node's data volume is also mounted read-only at `/mnt/knots` for cookie-based RPC authentication.
+| Volume | Mount Point | Purpose                                            |
+| ------ | ----------- | -------------------------------------------------- |
+| `main` | `/root`     | `data/datum_gateway_config.json`, and any log file |
 
-Key files on the `main` volume:
+Bitcoin's data directory is mounted **read-only** at `/mnt/knots`, which is how the gateway reads its RPC cookie — no credential is stored anywhere in this package.
 
-| File                             | Purpose                                                      |
-| -------------------------------- | ------------------------------------------------------------ |
-| `data/datum_gateway_config.json` | All Datum Gateway configuration (managed by StartOS actions) |
+## File Models
 
-## Installation and First-Run Flow
+One model, and it is the whole of the gateway's configuration.
 
-1. A default `datum_gateway_config.json` is written with sensible defaults, pre-configured to mine on OCEAN pool (`datum-beta1.mine.ocean.xyz`)
-2. Two **critical tasks** are created prompting the user to:
-   - **Set an admin password** — required to access the Datum Gateway dashboard
-   - **Set a pool address** — the Bitcoin address for mining rewards
-3. Bitcoin RPC is pre-configured to connect to the local `bitcoind` service via cookie authentication (`/mnt/knots/.cookie`)
-4. A dependency task is created on `bitcoind` to set `blocknotify` to `curl -s -m5 <Datum's Web UI over the LXC bridge>/NOTIFY` (resolved at runtime by `ownUiUrl` in `startos/utils.ts`), ensuring Datum receives new block notifications
+| File                             | Format | Modelled                | Written by                           |
+| -------------------------------- | ------ | ----------------------- | ------------------------------------ |
+| `data/datum_gateway_config.json` | JSON   | Yes — `FileHelper.json` | Every init, `main`, and every action |
 
-## Configuration Management
+**Enforced** — rewritten to a fixed value whenever the package writes the file: `bitcoind.rpccookiefile`, `stratum.listen_addr` and `listen_port`, `api.listen_addr` and `listen_port`, and `logger.log_to_stderr`. `bitcoind.rpcuser` and `bitcoind.rpcpassword` are modelled as "must be absent" and deleted if present — authentication is the cookie.
 
-Datum Gateway is configured through **StartOS actions** that write to `datum_gateway_config.json` on the `main` volume.
+**Derived:** `bitcoind.rpcurl` is written by `main` from the node's own binding on every start. While Bitcoin is absent the key is omitted rather than filled with a dead address, so the connection fails honestly and heals when the node returns.
 
-### Config Actions
+**Everything else is yours**, through the config actions. The package overrides nothing: the two values it does set — the admin password and the payout address — are requested through [tasks](#tasks) rather than defaulted, because the gateway cannot run without either and neither has a safe default.
 
-Each configuration section has its own dedicated action:
+The one place the package reshapes rather than passes through is the reward-sharing choice. Upstream expresses it as two fields — a pool host and a pooled-mining-only flag — whose combinations do not read as a spectrum; the Datum action presents a single **require / prefer / never** choice and derives both fields from it, filling in the default DATUM pool host when you ask to require sharing and no host is set. Reading the file back reverses the derivation, so the form and the file stay in agreement.
 
-| Action                      | Settings                                                                                                                                                                                                        |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Bitcoin RPC Settings**    | Work update interval (5–120 seconds)                                                                                                                                                                            |
-| **Stratum Server Settings** | Max clients per thread, max threads, max clients, PROXY trust level, vardiff parameters (min difficulty, target shares/min, update speed, delta), stale share timeout, miner fingerprinting, username modifiers |
-| **Mining Settings**         | Bitcoin payout address, primary/secondary coinbase tags, coinbase unique ID                                                                                                                                     |
-| **API**                     | Allow insecure authentication (for Safari)                                                                                                                                                                      |
-| **Logger**                  | Console log level (0–5), file logging toggle, log file path, file log level                                                                                                                                     |
-| **Datum**                   | Pool host, pool port, pool public key, pass workers/full users to pool, always pay self, reward sharing strategy (require/prefer/never)                                                                         |
-
-Settings **not** managed by StartOS (hardcoded or derived):
-
-| Setting                 | Value                         | Reason                                                                                                                |
-| ----------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `rpccookiefile`         | `/mnt/knots/.cookie`          | Bitcoin cookie auth via mounted volume                                                                                |
-| `rpcurl`                | bitcoind's LXC-bridge RPC URL | Resolved at runtime by `main.ts`; omitted while bitcoind is absent (no address written until the dependency resolves) |
-| `listen_addr` (stratum) | `""` (all interfaces)         | Required for container networking                                                                                     |
-| `listen_addr` (api)     | `""` (all interfaces)         | Required for container networking                                                                                     |
-| `notify_fallback`       | `true`                        | Ensures block updates if blocknotify fails                                                                            |
-
-### Reward Sharing Strategy
-
-The **reward sharing** selector in the Datum Pool section controls pooled vs solo mining:
-
-| Option                | Behavior                                                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Require** (default) | Pool mining required; `pooled_mining_only` = true. If pool host is empty, defaults to OCEAN. If pool goes down, Datum stops issuing work — miners should have backup pools configured |
-| **Prefer**            | Pool mining preferred; `pooled_mining_only` = false. Falls back to solo mining if pool is unavailable                                                                                 |
-| **Never**             | Solo mining only; clears `pool_host` and sets `pooled_mining_only` = false. All block rewards go to the configured pool address                                                       |
-
-### Username Modifiers
-
-The stratum server supports **username modifiers** for distributing mining shares across multiple Bitcoin addresses. Each modifier maps a name to a set of addresses with split percentages (0–100). The splits within a single modifier must sum to 100.
-
-## Network Access and Interfaces
-
-| Interface      | Port  | Protocol          | Purpose                                           |
-| -------------- | ----- | ----------------- | ------------------------------------------------- |
-| Web UI         | 7152  | HTTP              | Datum Gateway dashboard (admin password required) |
-| Stratum Server | 23334 | TCP (stratum+tcp) | Mining protocol — point ASICs here                |
-
-### Connecting Miners
-
-Configure mining hardware with:
-
-- **URL**: `stratum+tcp://<your-startos-address>:23334`
-- **Username**: Bitcoin payout address, optionally with worker name (e.g., `bc1q...abc.worker1`)
-- **Password**: Ignored — use `x` or leave blank
-
-### Payout Address Behavior (Pooled Mining)
-
-By default, **Pool Pass Full Users** is enabled. This means rewards from OCEAN (or any DATUM-supporting pool) go to the Bitcoin addresses configured in your **miners**, not the address in Datum Gateway's config. The config address acts as a fail-safe for solo mining rewards if the pool goes down.
-
-If you prefer to use a single payout address for all miners, disable **Pool Pass Full Users** in the Datum config action. Then the Bitcoin address in Datum Gateway's config will be used for pool payouts, and you can use just worker names (without addresses) in your miners.
-
-### Failover Behavior
-
-With the default **Require** reward sharing strategy, if the pool connection fails, Datum Gateway stops issuing work. Miners should be configured with backup pool(s) to fail over to.
-
-With the **Prefer** strategy, Datum Gateway falls back to solo mining if the pool is unavailable, continuing to issue work using your own block templates.
-
-## Actions (StartOS UI)
-
-### Config
-
-| Action                      | Purpose                                      | Availability |
-| --------------------------- | -------------------------------------------- | ------------ |
-| **Bitcoin RPC Settings**    | Configure Bitcoin RPC work update interval   | Any          |
-| **Stratum Server Settings** | Configure stratum server tuning and vardiff  | Any          |
-| **Mining Settings**         | Configure payout address and coinbase tags   | Any          |
-| **API**                     | Configure dashboard authentication           | Any          |
-| **Logger**                  | Configure log levels and file logging        | Any          |
-| **Datum**                   | Configure pool connection and reward sharing | Any          |
-| **Create/Reset Password**   | Generate admin password for the dashboard    | Any          |
-
-The **Create/Reset Password** action dynamically shows "Create Password" when no password is set, and "Reset Password" otherwise. It generates a 22-character random password and saves it to the config.
-
-## Backups and Restore
-
-**Backed up:** The entire `main` volume, including `datum_gateway_config.json` (all configuration and credentials).
-
-**Restore behavior:** Restoring overwrites current configuration with the backup copy.
-
-## Health Checks
-
-| Check                                   | Method                                                 | Messages                                              |
-| --------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
-| **Web Interface**                       | `checkPortListening` on port 7152                      | Ready: "The Datum Gateway dashboard is ready"         |
-| **Stratum Interface**                   | `checkPortListening` on port 23334 (1s timeout)        | Ready: "Stratum server is available"                  |
-| **Number of Stratum Clients Connected** | Polls dashboard every 10s; parses active subscriptions | "Connected Clients: N"                                |
-| **Estimated Hashrate**                  | Polls dashboard every 10s; parses estimated hashrate   | "Estimated Hashrate: N H/s" (unit reflects dashboard) |
-
-All checks except **Web Interface** require the datum daemon to be ready first.
+Stratum username modifiers are also reshaped: the file stores them as nested objects keyed by name and address, and the form presents them as lists, because a keyed object cannot express removal in a form.
 
 ## Dependencies
 
-| Dependency                    | Required | Purpose                                                                                     |
-| ----------------------------- | -------- | ------------------------------------------------------------------------------------------- |
-| **Bitcoin Node** (`bitcoind`) | Optional | Block template generation via `getblocktemplate`; new block notifications via `blocknotify` |
+One, declared optional in the manifest but required in practice.
 
-When the Bitcoin dependency is configured, Datum Gateway automatically creates a task on `bitcoind` to set `blocknotify` to curl Datum's own Web UI `/NOTIFY` endpoint over the LXC bridge (resolved at runtime). This task is re-evaluated on every init to ensure the setting persists.
+| Dependency | Kind      | Health check | Mount                   | Why                                          |
+| ---------- | --------- | ------------ | ----------------------- | -------------------------------------------- |
+| Bitcoin    | `running` | `bitcoind`   | `/mnt/knots`, read-only | Block templates over RPC, and the RPC cookie |
 
-Bitcoin Knots is recommended over Bitcoin Core for its superior template controls and mempool filtering.
+The node's RPC address is resolved from its own binding over the service bridge, so a Bitcoin update does not move it and nothing is configured by hand.
+
+The daemon **restarts when Bitcoin writes a replacement RPC cookie**, but not when the cookie merely disappears — an absent cookie means Bitcoin is down, and restarting into that is pointless churn.
+
+Datum also needs the node to push it new blocks, which the node will not do unless configured. The package therefore raises a `critical` task on **Bitcoin**, not on itself — see [Tasks](#tasks).
+
+## Network Access and Interfaces
+
+Two interfaces: one for you, one for your miners.
+
+| Interface      | Id        | Type | Port  | Description                 |
+| -------------- | --------- | ---- | ----- | --------------------------- |
+| Web UI         | `ui`      | ui   | 7152  | The Datum Gateway dashboard |
+| Stratum Server | `stratum` | api  | 23334 | Where ASICs connect         |
+
+Both are bound on their own hosts — `main` and `mining` — so the dashboard and the miner-facing endpoint can be exposed independently. The stratum binding is plain TCP with no TLS, which is what stratum clients expect.
+
+## Installation and First-Run Flow
+
+Install writes the config file with its defaults and starts the daemon. Two things are then missing, and each raises a `critical` task rather than being guessed at: **the dashboard's admin password**, and **the Bitcoin address rewards are paid to**. Neither has a safe default — one is a credential, the other is where money goes.
+
+A third piece of setup happens on Bitcoin rather than here: the node has to be told to notify the gateway on each new block, which is raised as a task on Bitcoin's own page as soon as the gateway's address is resolvable.
+
+Once all three are done the gateway is mining — solo by default configuration, or through a pool if you change the Datum settings.
+
+## Actions
+
+Eight actions. Six configure the gateway, one sets the password, and one is driven by a task.
+
+### Config — Mining, Datum, Stratum, Bitcoin RPC, API, Logger
+
+Six actions grouped under Config, each writing its own section of the config file. All are runnable running or stopped, all are pre-filled from the current file, all are safe to re-run, and all cost seconds plus a restart.
+
+- **Mining Settings** carries the payout address and the coinbase tags. The address is the one field that must be set for the gateway to be useful.
+- **Datum** chooses between requiring collaborative reward sharing, preferring it, or never sharing — see [File Models](#file-models) for how that maps onto upstream's two fields — along with the pool's host, port, and public key. Defaults here point at OCEAN; changing them switches pool or moves to solo mining.
+- **Stratum** tunes what miners see: client limits, variable difficulty, idle timeouts, and per-username payout splitting.
+- **Bitcoin RPC settings** carries the template refresh interval.
+- **API** carries one setting: whether to allow insecure dashboard authentication, which some browsers require and which lowers the login's security.
+- **Logger** carries console and file log levels and the log file path.
+
+### Create / Reset Password
+
+Generates the dashboard's admin password. The action renames itself — "Create Password" when none is set, "Reset Password" afterwards — so it reads correctly both as the install task and as recovery later.
+
+- **What it changes:** `api.admin_password` in the config file.
+- **Repeat safety:** safe to re-run; each run generates a fresh password and invalidates the old one.
+- **Outputs:** the password, masked and copyable. It is not recoverable afterwards.
+
+### Config pool address — hidden
+
+**Not in the Actions list.** It is `visibility: 'hidden'` and reachable only through the task that raises it, so a user is never sent looking for it. It sets the payout address alone; the same field is editable afterwards through Mining Settings.
+
+## Tasks
+
+Three tasks, and one of them appears on another service's page.
+
+| Task                | Raised on | Severity   | Raised when                                            | Cleared when                                          |
+| ------------------- | --------- | ---------- | ------------------------------------------------------ | ----------------------------------------------------- |
+| Create Password     | this      | `critical` | At init, while no admin password is set                | The action runs                                       |
+| Config pool address | this      | `critical` | At init, while no payout address is set                | The action runs                                       |
+| Auto-Configure      | Bitcoin   | `critical` | Bitcoin's `blocknotify` is not the command Datum needs | Bitcoin's config matches; it returns if changed again |
+
+The two local tasks are `critical` because neither a dashboard without a password nor mining without a payout address is a usable state.
+
+The Bitcoin task is the one worth explaining, because nothing on Bitcoin's page says where it came from: Datum needs the node to call its notify endpoint whenever a block arrives, and that setting lives in Bitcoin's configuration. The task carries the exact command, including this gateway's address on the service bridge, and re-raises if the setting is ever changed away. It is only created once that address is resolvable — before then there is no correct value to ask for.
+
+## Health Checks
+
+Four checks. Two report health; two report numbers.
+
+| Check                       | Displayed                             | Method                                 |
+| --------------------------- | ------------------------------------- | -------------------------------------- |
+| `datum`                     | "Web Interface"                       | The dashboard port is listening        |
+| `stratum-interface`         | "Stratum Interface"                   | The stratum port is listening          |
+| `stratum-clients-connected` | "Number of Stratum Clients Connected" | Scraped from the dashboard, every 10 s |
+| `estimated-hashrate`        | "Estimated Hashrate"                  | Scraped from the dashboard, every 10 s |
+
+**The last two never fail.** They exist to surface operating figures — how many miners are connected, and what they are producing — on the service page rather than requiring the dashboard to be open. When the value cannot be read they still report success, with a message saying so, because an unreadable statistic is not a fault.
+
+**`stratum-interface` is the one to watch if miners cannot connect.** It is separate from the dashboard check because the two ports are independent: the dashboard can be up while the stratum listener is not.
+
+## Backups and Restore
+
+The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No dump step and nothing excluded.
+
+- **Included:** the config file, and with it the payout address, the pool settings, and the dashboard password.
+- **Restore:** complete, and no task is raised, because the password and address arrive with the backup. Bitcoin's notify setting is not part of this package's backup — if the restored server's Bitcoin node does not carry it, the task raises again there.
 
 ## Limitations and Differences
 
-1. **Custom Docker image** — compiled from source with CMake; includes runtime dependencies (libmicrohttpd, libjansson, libsodium) not in upstream binary releases
-2. **RPC cookie auth enforced** — always uses the mounted Bitcoin node's `.cookie` file; no manual RPC credentials
-3. **Immutable ports** — stratum (23334) and dashboard (7152) ports cannot be changed through the config action
-4. **Admin password required** — a critical task forces password creation before the dashboard is accessible
-5. **Pool address required** — a critical task forces pool address configuration before mining can begin
-6. **blocknotify auto-configured** — the `bitcoind` blocknotify setting is automatically managed; manual changes will be overwritten
-7. **Config file not editable via dashboard** — `modify_conf` is hardcoded to `false`; all configuration changes must go through StartOS actions
-
-## What Is Unchanged from Upstream
-
-- Stratum mining protocol (stratum+tcp)
-- Block template generation via `getblocktemplate`
-- Variable difficulty (vardiff) algorithm
-- Coinbase tag and unique ID handling
-- DATUM pool protocol (encrypted connection to pool server)
-- Username-based payout addressing (Pool Pass Full Users / Pool Pass Workers)
-- Worker identification and fingerprinting
-- Share validation and stale share handling
-- Failover behavior (pooled → stop or pooled → solo, depending on config)
-- Dashboard UI and monitoring features
-
-## Contributing
-
-Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
+1. **A Bitcoin node is required in practice**, despite the dependency being declared optional: without it there are no block templates.
+2. **Bitcoin must be configured to notify the gateway**, which is a change to Bitcoin's own settings, requested as a task on that service.
+3. **Reward sharing is presented as one choice, not two fields.** The underlying pool host and pooled-mining flag are derived from it.
+4. **Mining cannot start until the payout address is set**, by design rather than by defaulting to an address the package chose.
+5. **The stratum endpoint is plain TCP.** There is no TLS option, which matches what ASIC firmware expects.
+6. **No riscv64 build.** x86_64 and aarch64 only.
 
 ---
 
@@ -209,46 +183,38 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 
 ```yaml
 package_id: datum
-image: custom Dockerfile (built from Datum Gateway C source)
-architectures: [x86_64, aarch64]
+image: ./Dockerfile # built from the datum_gateway/ source
+architectures:
+  - x86_64
+  - aarch64
+subcontainers:
+  - datum-sub
 volumes:
   main: /root
-dependency_mounts:
-  bitcoind_main: /mnt/knots (read-only)
-ports:
-  ui: 7152
-  stratum: 23334
+file_models:
+  - /root/data/datum_gateway_config.json
+startos_managed_env_vars: []
 dependencies:
-  - bitcoind (optional)
-startos_managed_files:
-  - data/datum_gateway_config.json
+  - bitcoind # declared optional; required in practice, mounted read-only at /mnt/knots
+interfaces:
+  ui: { type: ui, port: 7152 }
+  stratum: { type: api, port: 23334 }
 actions:
-  - bitcoind-config
-  - stratum-config
   - mining-config
+  - datum-config
+  - stratum-config
+  - bitcoind-config
   - api-config
   - logger-config
-  - datum-config
-  - autoconfig-pool-address (hidden, task-triggered)
-  - reset-password
+  - reset-password # renames itself to "Create Password" when none is set
+  - autoconfig-pool-address # hidden; raised by task only
+tasks:
+  - { action: reset-password, severity: critical }
+  - { action: autoconfig-pool-address, severity: critical }
+  - { action: autoconfig, severity: critical } # on bitcoind, for blocknotify
 health_checks:
-  - checkPortListening:7152: web_interface
-  - checkPortListening:23334: stratum_interface
-  - poll_dashboard:10s: stratum_clients_connected
-  - poll_dashboard:10s: estimated_hashrate
-backup_volumes:
-  - main (full volume)
-auto_configured_dependency_settings:
-  bitcoind:
-    blocknotify: "curl -s -m5 <Datum's LXC-bridge Web UI URL>/NOTIFY"
-init_tasks:
-  - reset-password (critical, if no admin password set)
-  - autoconfig-pool-address (critical, if no pool address set)
-config_sections:
-  - bitcoind (RPC settings)
-  - stratum (server tuning, vardiff, username modifiers)
-  - mining (payout address, coinbase tags)
-  - api (dashboard settings)
-  - logger (log levels, file logging)
-  - datum (pool connection, reward sharing strategy)
+  - datum # displayed "Web Interface"
+  - stratum-interface
+  - stratum-clients-connected # informational; never fails
+  - estimated-hashrate # informational; never fails
 ```

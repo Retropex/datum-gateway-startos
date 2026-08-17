@@ -23,5 +23,6 @@ Datum Gateway is built from source by the `Dockerfile` at the repo root. The ups
   cd ..
   git add datum_gateway
   ```
+
 </content>
 </invoke>

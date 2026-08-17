@@ -84,6 +84,9 @@ const datumShape = z.object({
   protocol_global_timeout: optNumber,
 })
 
+// Two shapes, and they must be edited together. diskShape is what upstream
+// reads; formShape differs only in stratum.username_modifiers, which is a keyed
+// object on disk and a list in the form.
 const diskShape = z.object({
   bitcoind: bitcoindShape.catch(bitcoindShape.parse({})),
   stratum: stratumShape.catch(stratumShape.parse({})),
