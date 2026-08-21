@@ -125,6 +125,9 @@ export default {
     277: 'Incluez toujours mon paiement datum.pool_username dans mes blocs si possible.',
     278: 'Partage collaboratif des récompenses (minage en pool)',
     279: "Vous pouvez partager les récompenses et profiter des récompenses des autres, ou n'être récompensé que lorsque vous trouvez vous-même un bloc.",
+    280: 'Allow hasher time rolling for BLAKE2b jobs',
+    281: 'algorithme PoW',
+    282: 'Algorithme PoW: automatique (suit GBT), blake2b (en-tête Knots v2 / Antminer A3) ou sha256d',
 
     // common
     1000: 'Doit être alphanumérique.',

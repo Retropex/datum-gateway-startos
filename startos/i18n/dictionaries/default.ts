@@ -125,6 +125,9 @@ const dict = {
   'Always include my datum.pool_username payout in my blocks if possible': 277,
   'Collaborative reward sharing (pooled mining)': 278,
   "You can share rewards and share in others' rewards - or only get rewarded when you find a block yourself.": 279,
+  'Allow hasher time rolling for BLAKE2b jobs': 280,
+  'PoW algorithm': 281,
+  'PoW algorithm: auto (follow GBT), blake2b (Knots header v2 / Antminer A3), or sha256d': 282,
 
   // common
   'Must be alphanumeric.': 1000,

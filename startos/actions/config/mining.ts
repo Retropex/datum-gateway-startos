@@ -50,6 +50,23 @@ const inputSpec = InputSpec.of({
     max: 65535,
     integer: true,
   }),
+  allow_hasher_time_rolling: Value.toggle({
+    name: i18n('Allow hasher time rolling for BLAKE2b jobs'),
+    default: false,
+    description: i18n('Allow hasher time rolling for BLAKE2b jobs'),
+  }),
+  pow_algorithm: Value.select({
+    name: i18n('PoW algorithm'),
+    description: i18n(
+      "PoW algorithm: auto (follow GBT), blake2b (Knots header v2 / Antminer A3), or sha256d",
+    ),
+    default: 'auto',
+    values: {
+      auto: 'auto',
+      blake2b: 'blake2b',
+      sha256d: 'sha256d',
+    },
+  }),
 })
 
 export const miningConfig = sdk.Action.withInput(
