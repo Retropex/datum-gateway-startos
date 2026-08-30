@@ -1,7 +1,7 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '#pow:0.4.1:16',
+  version: '#pow:0.4.1:17',
   releaseNotes: {
     en_US: `Fixes found blocks being rejected by the node as high-hash. The BLAKE2b H1 commitment now includes the header-v2 bit, so the share proof of work matches what the node computes on submitblock.`,
     es_ES: `Corrige que los bloques encontrados fueran rechazados por el nodo como high-hash. El compromiso H1 de BLAKE2b ahora incluye el bit header-v2, por lo que la prueba de trabajo del share coincide con la que calcula el nodo en submitblock.`,
