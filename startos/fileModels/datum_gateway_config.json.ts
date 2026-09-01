@@ -51,10 +51,6 @@ const miningShape = z.object({
   coinbase_tag_secondary: optString,
   coinbase_unique_id: optNumber,
   allow_hasher_time_rolling: optBoolean,
-  pow_algorithm: z
-    .enum(['auto', 'blake2b', 'sha256d'])
-    .optional()
-    .catch(undefined),
 })
 
 const apiShape = z.object({
