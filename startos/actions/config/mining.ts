@@ -55,6 +55,11 @@ const inputSpec = InputSpec.of({
     default: false,
     description: i18n('Allow hasher time rolling for BLAKE2b jobs'),
   }),
+  abw_verify_all_shares_on_disclosure: Value.toggle({
+    name: 'Verify all shares on disclosure',
+    default: false,
+    description: 'Retain ABW proofs until key disclosure and alarm if the pool ignored a block',
+  }),
 })
 
 export const miningConfig = sdk.Action.withInput(

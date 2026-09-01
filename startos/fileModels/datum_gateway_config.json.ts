@@ -51,6 +51,7 @@ const miningShape = z.object({
   coinbase_tag_secondary: optString,
   coinbase_unique_id: optNumber,
   allow_hasher_time_rolling: optBoolean,
+  abw_verify_all_shares_on_disclosure: optBoolean,
 })
 
 const apiShape = z.object({
