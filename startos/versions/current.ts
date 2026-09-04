@@ -1,13 +1,13 @@
 import { VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '#pow:0.4.1:18',
+  version: '#pow:0.4.1:19',
   releaseNotes: {
-    en_US: `Update to the latest upstream code, include a mining pool fix.`,
-    es_ES: `Actualización al último código upstream, incluye una corrección para el pool de minería.`,
-    de_DE: `Aktualisierung auf den neuesten Upstream-Code, einschließlich einer Korrektur für den Mining-Pool.`,
-    pl_PL: `Aktualizacja do najnowszego kodu upstream, zawiera poprawkę dla puli wydobywczej.`,
-    fr_FR: `Mise à jour vers le dernier code upstream, incluant une correction pour le pool de minage.`,
+    en_US: `Check if the node is BLAKE2b`,
+    es_ES: `Comprobar si el nodo es BLAKE2b`,
+    de_DE: `Prüfen, ob der Knoten BLAKE2b ist`,
+    pl_PL: `Sprawdź, czy węzeł jest BLAKE2b`,
+    fr_FR: `Vérifie si le nœud est BLAKE2b`,
   },
   migrations: {
     up: async ({ effects }) => {},

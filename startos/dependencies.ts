@@ -26,7 +26,7 @@ export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   return {
     bitcoind: {
       kind: 'running',
-      versionRange: '>=28.4:14',
+      versionRange: '>=#knots:29.4.1:7',
       healthChecks: ['bitcoind'],
     },
   }
