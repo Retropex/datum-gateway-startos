@@ -55,18 +55,11 @@ const inputSpec = InputSpec.of({
     default: false,
     description: i18n('Allow hasher time rolling for BLAKE2b jobs'),
   }),
-  pow_algorithm: Value.select({
-    name: i18n('PoW algorithm'),
-    description: i18n(
-      "PoW algorithm: auto (follow GBT), blake2b (Knots header v2 / Antminer A3), or sha256d",
-    ),
-    default: 'auto',
-    values: {
-      auto: 'auto',
-      blake2b: 'blake2b',
-      sha256d: 'sha256d',
-    },
-  }),
+  abw_verify_all_shares_on_disclosure: Value.toggle({
+    name: "AWB verify all shares on disclosure",
+    default: true,
+    description: "Retain ABW proofs until key disclosure and alarm if the pool ignored a block",
+  })
 })
 
 export const miningConfig = sdk.Action.withInput(

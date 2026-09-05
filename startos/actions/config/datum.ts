@@ -10,7 +10,7 @@ const inputSpec = InputSpec.of({
     name: i18n('Pool Host'),
     required: false,
     default: null,
-    placeholder: 'datum-beta1.mine.ocean.xyz',
+    placeholder: 'datum-beta1.mine.convoy.xyz',
     description: i18n(
       'Remote DATUM server host/ip to use for decentralized pooled mining',
     ),
@@ -30,10 +30,19 @@ const inputSpec = InputSpec.of({
     required: false,
     default: null,
     placeholder:
-      'f21f2f0ef0aa1970468f22bad9bb7f4535146f8e4a8f646bebc93da3d89b1406f40d032f09a417d94dc068055df654937922d2c89522e3e8f6f0e649de473003',
+      'dbb11fa0c2b5403e4f798fa6071bb97e6079d219598366032fdf2ae01962b13c5e66e2be7d6b008f0b2603f3e6f6fc64768fa786c8129c46d3e30a5867734b62',
     description: i18n(
       'Public key of the DATUM server for initiating encrypted connection. Leave empty to auto-fetch.',
     ),
+  }),
+  migration_max_seconds: Value.number({
+    name: 'Migration max second',
+    default: null,
+    placeholder: '86400',
+    min: 0,
+    required: false,
+    integer: true,
+    description: 'Maximum time to remain away from the configured DATUM server after a server-requested migration (0 disables migration)',
   }),
   pool_pass_workers: Value.toggle({
     name: i18n('Pool Pass Workers'),
@@ -109,7 +118,7 @@ export const datumConfig = sdk.Action.withInput(
       sharing === 'never'
         ? ''
         : sharing === 'require' && !input.pool_host
-          ? 'datum-beta1.mine.ocean.xyz'
+          ? 'datum-beta1.mine.convoy.xyz'
           : (input.pool_host ?? undefined)
 
     await configJson.merge(effects, {
