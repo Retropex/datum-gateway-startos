@@ -12,11 +12,5 @@ export const current = VersionInfo.of({
   migrations: {
     up: async ({ effects }) => {},
     down: async ({ effects }) => {},
-    other: {
-        ['*']: {
-            up: async ({ effects }) => {},
-            down: async ({ effects }) => {},
-        }
-    }
   },
 })
